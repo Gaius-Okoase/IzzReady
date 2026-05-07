@@ -122,7 +122,7 @@ The source code is publicly viewable for educational and personal reference purp
 ## 📞 Contact
 
 - Founder: Okoase Gaius Oreoluwa
-- Email: gaiusonosetale@gmail.com
+- Email: [gaiusonosetale@gmail.com]
 - LinkedIn: [Gaius Okoase Oreoluwa](https://www.linkedin.com/in/gaius-okoase/)
 - X: [@Gaius_Oreoluwa](https://x.com/Gaius_Oreoluwa)
 
