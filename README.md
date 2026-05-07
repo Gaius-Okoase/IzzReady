@@ -1,69 +1,137 @@
 # 🍽️ IzzReady
 
-**Food is ready.**
+**Know before you go.**  
+*Real-time food availability for local bukkas*
+
+---
 
 ## 📌 App Summary
 
-IzzReady is a two-sided web platform that connects local bukka owners and food sellers with nearby customers through real-time food availability updates.
+**IzzReady** is a web platform that connects local bukka owners with customers through real-time food availability and readiness updates.
 
-It provides a simple system for vendors to update food availability in real time, while allowing customers to check what is ready, what is still being prepared, and when it will be available.
+It solves a daily frustration in Nigeria: customers often waste time and energy going to bukkas only to find their desired food is unavailable or not yet ready. IzzReady lets customers check status remotely and get notified when food is ready, while giving bukka owners a simple tool to update their menu status in real time.
 
 ---
 
-### 🧩 What It Does
+## 🧩 What It Does
 
-IzzReady connects two types of users:
+**For Bukka Owners:**
+- Create and manage their bukka profile and menu
+- Update food item status instantly:
+  - Unavailable
+  - Coming soon (with countdown timer)
+  - Ready
 
-**Bukka Owners**
-- Easily create and manage their bukka profile 
-- List available food items
-- Update the status of each item in real time:
-  - unavailable
-  - coming soon (with a timer)
-  - awaiting confirmation
-  - ready
-
-**Customers**
+**For Customers:**
 - Discover nearby bukkas
-- View real-time food availability
-- See countdown timers for items being prepared
-- Join queues for specific food items
-- Receive notifications when food becomes available
+- View live food availability and timers
+- Join virtual queues for specific items
+- Receive instant notifications when food is ready
 
 ---
 
-### ❗ Problem It Solves
+## ❗ Problem It Solves
 
-In many neighborhoods, especially across Nigeria, customers rely on nearby bukka spots and street food vendors (“Mama Put”) for daily meals. But unlike structured restaurant platforms, there’s no reliable way to know:
+In neighborhoods across Nigeria, people depend on local bukkas (“Mama Put”) for affordable daily meals. However, there’s no reliable way to know what’s available or ready before leaving home. This leads to wasted trips, hunger, frustration, and emotional stress.
 
-- What food is available
-- What is currently being prepared
-- When something will be ready
-
-This often leads to wasted trips, long waits, or settling for less preferred options.
-
-While platforms like Chowdeck and similar services focus on established restaurants and delivery, they largely exclude small, local food vendors — the ones people rely on most day-to-day.
-
-IzzReady bridges that gap by giving bukka owners a simple way to update food availability in real time, while allowing customers to see what’s ready before they leave their location.
+While delivery apps focus on bigger restaurants, IzzReady fills the gap for small, hyper-local food vendors that Nigerians rely on every day.
 
 ---
 
-### 🔄 How It Works
+## 🔄 How It Works
 
-1. A bukka owner lists food items and sets their current status  
-2. Items marked as *coming soon* include a countdown timer  
-3. Customers browse available items and join queues for what they want  
-4. When the timer expires, the vendor confirms if the food is ready  
-5. Once confirmed:
-   - all queued customers are notified  
-   - the queue is cleared  
+1. Bukka owners list their food items and update statuses in real time.
+2. Customers browse nearby bukkas and see live availability + countdown timers.
+3. Customers can join a queue for items that are “coming soon.”
+4. When the vendor marks an item as **Ready**, all queued customers get notified instantly.
+5. The queue clears after confirmation.
 
 ---
 
-### 👥 Core Concept
+## 👥 Core Concept
 
-Instead of customers waiting physically at a bukka,  
-IzzReady introduces a **virtual queue system** tied to food availability.
+**Check before you go** — Customers can instantly see the availability of food at their favorite bukkas before leaving home, removing the uncertainty and wasted trips.
 
-This allows customers to plan better and reduces unnecessary waiting time at food locations, while also allowing bukka
-owners to serve customers better.
+**Browse nearby bukkas** — Discover and compare real-time status of multiple bukkas around you.
+
+**Virtual queuing** — Customers no longer need to wait physically at the bukka. They queue digitally, continue with their day, and get notified the moment their food is ready.
+
+---
+
+## ✨ Key Features
+
+- Real-time food status updates
+- Countdown timers with automatic notifications
+- Virtual queue system
+- Hyper-local bukka discovery (neighborhood-based)
+- Simple, mobile-friendly vendor dashboard (big buttons, low effort)
+- Push and web notifications
+- Two user roles: Customer & Bukka Owner
+
+---
+
+## 🛠️ Tech Stack
+
+**Backend**
+- Node.js + TypeScript
+- Express.js
+- MongoDB + Mongoose
+- Redis (caching, queues & real-time)
+- Google OAuth 2.0 and JWT for authentication
+
+**Frontend**
+- To be decided
+
+---
+
+## 🚀 Project Status
+
+- **Stage**: Pre-development (Idea validation & planning)
+- **MVP Goal**: Launch with 1–5 bukkas, starting with the founder’s family bukka
+- **Target Launch**: June 2026
+
+---
+
+## 💡 Why This Will Work
+
+- Solves a very painful, daily problem for millions of Nigerians
+- Extremely low effort required from bukka owners
+- Strong network effects (more bukkas = more customers, and vice versa)
+- Starts hyper-local in Lagos before expanding to other cities
+
+---
+
+## 📍 Target Market
+
+- **Customers**: Students, young professionals, and workers in Lagos who frequently eat at bukkas.
+- **Bukka Owners**: Small local food sellers and “Mama Put” operators.
+
+Initial focus: Ipaja → Lagos → Other major Nigerian cities.
+
+---
+
+## 📄 License
+
+This project is **Source Available** under the **Business Source License 1.1 (BSL)**.  
+
+The source code is publicly viewable for educational and personal reference purposes. However, it does **not** grant rights for free commercial use, modification, redistribution, or integration into other commercial products without explicit permission from the author.
+
+
+---
+
+## 📞 Contact
+
+- Founder: WhoisGaius? (@Gaius_Oreoluwa)
+- Email: [gaiusonosetale@gmail.com]
+- LinkedIn: [Gaius Okoase Oreoluwa](https://www.linkedin.com/in/gaius-okoase/)
+- X: [@Gaius_Oreoluwa](https://x.com/Gaius_Oreoluwa)
+
+---
+
+## ⭐ Support the Project
+
+If you believe in this idea, give it a star ⭐ and share it with someone who might find it useful!
+
+---
+
+*Built with love for every Nigerian who has ever walked to a bukka hungry, only to be disappointed.*
