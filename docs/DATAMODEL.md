@@ -28,7 +28,7 @@ Table bukkas {
   id string [pk]
   userId string [ref: > users.id]
   name string
-  location Geojson  // coordinates (can be JSON or GeoJSON depending on implementation)
+  location Geojson 
   createdAt timestamp
   updatedAt timestamp
 }
