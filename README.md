@@ -112,9 +112,7 @@ Initial focus: Ipaja → Lagos → Other major Nigerian cities.
 
 ## 📄 License
 
-This project is **Source Available** under the **Business Source License 1.1 (BSL)**.  
-
-The source code is publicly viewable for educational and personal reference purposes. However, it does **not** grant rights for free commercial use, modification, redistribution, or integration into other commercial products without explicit permission from the author.
+This project is **UNLICENSED**.
 
 
 ---
