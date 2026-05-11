@@ -23,12 +23,15 @@ const config = {
     clientSec: process.env.CLIENT_SECRET,
 
     // CORS
-    origin: process.env.CORS_ORIGIN || '*'
+    corsOrigin: process.env.CORS_ORIGIN
 }
 
 for (const key in config) {
     const configKey = key as keyof typeof config
-    if(config[configKey] === undefined) console.log(`${configKey} is undefined.`)
+    if(config[configKey] === undefined) {
+        console.error(`${configKey} is undefined.`)
+        process.exit(1)
+    }
 }
 
 export default config;
