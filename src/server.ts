@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import {Server} from 'http'
 import config from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
@@ -26,6 +27,16 @@ app.get('/health', (_req, res) => {
         environment: config.env
     })
 })
+
+// Middleware to catch all undefinedroutes
+app.use('*', (req, res) => {
+    res.status(404).json({
+        status: 'error',
+        message: `${req.originalUrl} does not exist`,
+        timestamp: new Date
+    })
+})
+app.use(errorHandler)
 
 let server: Server;
 

@@ -14,8 +14,10 @@ export const connectDB = async () => {
         })
         console.log(`MongoDB connected successfully`)
     } catch (error) {
-        error instanceof MongooseError ? console.error('Failed to connect to MongoDB:', error.message) : console.error('Failed to connect to MongoDB', error);
-        process.exit(1);
+        error instanceof MongooseError 
+        ? console.error('Failed to connect to MongoDB:', error.message) 
+        : console.error('Failed to connect to MongoDB', error);
+        process.exit(1)
     }
 };
 
@@ -24,7 +26,9 @@ export const disconnectDB = async () => {
         await mongoose.connection.close();
         console.log(`MongoDB discconected successfully`);
     } catch (error) {
-        error instanceof MongooseError ? console.error('Failed to disconnect MongoDB:', error.message) : console.error('Failed to disconnect MongoDB', error);
+        error instanceof MongooseError 
+        ? console.error('Failed to disconnect MongoDB:', error.message) 
+        : console.error('Failed to disconnect MongoDB', error);
         process.exit(1);        
     }
 }

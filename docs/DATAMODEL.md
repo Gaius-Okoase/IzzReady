@@ -14,12 +14,13 @@ Table users {
   id string [pk]
   googleId string
   name string
-  email string [unique]
-  phoneNumber string [unique]
+  email string [unique] [sparse]
+  phoneNumber string [unique] [sparse]
   password string
   role string
   isProfileComplete boolean
   pushNotifToken string
+  refreshToken string
   createdAt timestamp
   updatedAt timestamp
 }
