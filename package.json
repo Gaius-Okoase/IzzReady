@@ -31,6 +31,7 @@
   "dependencies": {
     "@eslint/js": "^10.0.1",
     "axios": "^1.16.0",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",
+    "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
