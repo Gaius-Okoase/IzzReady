@@ -3,14 +3,16 @@
 ---
 
 ## Overview
-IzzReady's data model consists of four entities: **users**, **bukkas**, **food_items**, and **queue_entries**. 
-The model is *normalized*, meaning each piece of information is stored once and referenced by ID everywhere else it is needed.
+
+IzzReady's data model consists of four entities: **users**, **bukkas**, **food_items**, and **queue_entries**.
+The model is _normalized_, meaning each piece of information is stored once and referenced by ID everywhere else it is needed.
 
 ---
 
 ## Core Entities in DBML
+
 ```
-Table users { 
+Table users {
   id string [pk]  // Mongoose auto generated
   googleId string
   name string
@@ -58,23 +60,27 @@ Table queue_entries {
 ## Relationships
 
 **User → Bukka**
+
 - One-to-Many
 - A user can own multiple bukkas
 
 **Bukka → FoodItem**
+
 - One-to-Many
 - A bukka has many food items
 
 **User → Queue_Entries**
+
 - One-to-Many
 - A user can create multiple queue entries for different food items
 
 **FoodItem → QueueEntry**
+
 - One-to-Many
 - A food item can have multiple people in queue
 
 ---
 
-## ERD 
+## ERD
 
 ![IzzReady-ERD](/docs/images/IzzReady_ERD.png)

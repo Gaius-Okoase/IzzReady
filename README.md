@@ -1,7 +1,7 @@
 # 🍽️ IzzReady
 
 **Know before you go.**  
-*Real-time food availability for local bukkas*
+_Real-time food availability for local bukkas_
 
 ---
 
@@ -16,6 +16,7 @@ It solves a daily frustration in Nigeria: customers often waste time and energy 
 ## 🧩 What It Does
 
 **For Bukka Owners:**
+
 - Create and manage their bukka profile and menu
 - Update food item status instantly:
   - Unavailable
@@ -23,6 +24,7 @@ It solves a daily frustration in Nigeria: customers often waste time and energy 
   - Ready
 
 **For Customers:**
+
 - Discover nearby bukkas
 - View live food availability and timers
 - Join virtual queues for specific items
@@ -73,6 +75,7 @@ While delivery apps focus on bigger restaurants, IzzReady fills the gap for smal
 ## 🛠️ Tech Stack
 
 **Backend**
+
 - Node.js + TypeScript
 - Express.js
 - MongoDB + Mongoose
@@ -80,6 +83,7 @@ While delivery apps focus on bigger restaurants, IzzReady fills the gap for smal
 - Google OAuth 2.0 and JWT for authentication
 
 **Frontend**
+
 - To be decided
 
 ---
@@ -114,7 +118,6 @@ Initial focus: Ipaja → Lagos → Other major Nigerian cities.
 
 This project is **UNLICENSED**.
 
-
 ---
 
 ## 📞 Contact
@@ -132,4 +135,4 @@ If you believe in this idea, give it a star ⭐ and share it with someone who mi
 
 ---
 
-*Built with love for every Nigerian who has ever walked to a bukka hungry, only to be disappointed.*
+_Built with love for every Nigerian who has ever walked to a bukka hungry, only to be disappointed._

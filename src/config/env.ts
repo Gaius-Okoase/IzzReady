@@ -1,37 +1,37 @@
 import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 
 const config = {
-    // PORT
-    port: process.env.PORT || 4100,
+  // PORT
+  port: process.env.PORT || 4100,
 
-    // Environment
-    env: process.env.NODE_ENV || 'development',
-    isDevelopment: process.env.NODE_ENV === 'development',
-    isProduction: process.env.NODE_ENV === 'production',
+  // Environment
+  env: process.env.NODE_ENV || 'development',
+  isDevelopment: process.env.NODE_ENV === 'development',
+  isProduction: process.env.NODE_ENV === 'production',
 
-    // Database
-    mongoUri: process.env.MONGO_URI,
+  // Database
+  mongoUri: process.env.MONGO_URI,
 
-    // jwt
-    accessSec: process.env.JWT_ACCESS_SECRET,
-    refreshSec: process.env.JWT_REFRESH_SECRET,
+  // jwt
+  accessSec: process.env.JWT_ACCESS_SECRET,
+  refreshSec: process.env.JWT_REFRESH_SECRET,
 
-    // Google OAuth Credentials
-    clientId: process.env.CLIENT_ID,
-    clientSec: process.env.CLIENT_SECRET,
+  // Google OAuth Credentials
+  clientId: process.env.CLIENT_ID,
+  clientSec: process.env.CLIENT_SECRET,
 
-    // CORS
-    corsOrigin: process.env.CORS_ORIGIN
-}
+  // CORS
+  corsOrigin: process.env.CORS_ORIGIN,
+};
 
 for (const key in config) {
-    const configKey = key as keyof typeof config
-    if(config[configKey] === undefined) {
-        console.error(`${configKey} is undefined.`)
-        process.exit(1)
-    }
+  const configKey = key as keyof typeof config;
+  if (config[configKey] === undefined) {
+    console.error(`${configKey} is undefined.`);
+    process.exit(1);
+  }
 }
 
 export default config;
