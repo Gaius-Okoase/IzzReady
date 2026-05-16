@@ -1,4 +1,4 @@
-# Architecture Decision Record (ADR) 006 — Timer Design
+# Architecture Decision Record (ADR) 008 — Timer Design
 
 ## Problem
 When a bukka owner sets a countdown timer for a food item, something needs to detect when that timer expires and trigger a confirmation prompt.

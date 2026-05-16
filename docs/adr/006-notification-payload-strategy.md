@@ -1,4 +1,4 @@
-# ADR 009 — Notification Payload Strategy
+# ADR 006 — Notification Payload Strategy
 
 ---
 

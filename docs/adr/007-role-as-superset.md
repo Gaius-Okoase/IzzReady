@@ -1,4 +1,4 @@
-# ADR 004 — Role as a Superset
+# ADR 007 — Role as a Superset
 
 ## Problem
 A user can be both a customer and a bukka owner. The system needs to handle permissions for both without forcing separate accounts.
