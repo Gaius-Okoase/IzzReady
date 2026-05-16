@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import type { IBukka } from "../types/types.js";
 
-const bukkaSchema = new mongoose.Schema<IBukka, mongoose.Model<IBukka>>({
+const bukkaSchema = new mongoose.Schema<IBukka>({
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

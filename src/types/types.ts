@@ -25,3 +25,15 @@ export interface IBukka {
         coordinates: [number]
     }
 }
+
+export interface IFoodItem {
+    bukkaId: mongoose.Types.ObjectId,
+    name: string,
+    status: "unavailable" | "coming_soon" | "awaiting_confirmation" | "izz_ready",
+    timerExpiry: Date
+}
+
+export interface IQuery {
+    userId: mongoose.Types.ObjectId,
+    foodItemId: mongoose.Types.ObjectId,
+}

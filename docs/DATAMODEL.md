@@ -39,7 +39,7 @@ Table food_items {
   bukkaId string [ref: > bukkas.id]
   name string
   status string  // enum: unavailable, coming_soon, awaiting_confirmation, izz_ready
-  timer timestamp
+  expiresAt timestamp // formerly named 'timer' as seen on ERD
   createdAt timestamp
   updatedAt timestamp
 }
