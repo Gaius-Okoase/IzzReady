@@ -2,15 +2,15 @@ import type mongoose from 'mongoose';
 
 export interface IUser {
   // id: string - Mongoose auto generated
-  googleId?: string;
+  googleId?: string | undefined;
   name: string;
-  email?: string;
-  phoneNumber?: string;
-  password?: string;
+  email?: string | undefined;
+  phoneNumber?: string | undefined;
+  password?: string | undefined;
   role: 'customer' | 'owner';
   isProfileComplete: boolean;
-  pushNotifToken?: string;
-  refreshToken?: string;
+  pushNotifToken?: string | undefined;
+  refreshToken?: string | undefined;
 }
 
 export interface IUserMethod {
