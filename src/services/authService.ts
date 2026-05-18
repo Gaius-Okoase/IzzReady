@@ -24,9 +24,9 @@ export const createUserService = async (userData: IUser) => {
     const refreshToken = generateRefreshToken(user.id, user.role);
     const accessToken = generateAccessToken(user.id, user.role);
     user.refreshToken = refreshToken;
-
+    user.isProfileComplete = role === 'owner' ?  false : true
     //Save user to DB
     user.save();
 
-    return{ user, accessToken }
+    return{ user, accessToken, refreshToken }
 }

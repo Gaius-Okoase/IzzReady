@@ -1,8 +1,10 @@
 import type {Response} from 'express';
 
-export const successResponse = (res: Response, statusCode: number, data: object) => {
+export const successResponse = (res: Response, statusCode: number, message: string, data: object) => {
     res.status(statusCode).json({
         success: true,
-        ...data
+        message,
+        ...data,
+        timestamp: new Date().toISOString
     })
 }
