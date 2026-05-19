@@ -5,10 +5,9 @@ import cookieParser from 'cookie-parser';
 import { Server } from 'http';
 import config from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
-import authRoute from './routes/authRoute.js'
+import authRoute from './routes/authRoute.js';
 import { authLimit } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
-
 
 const app = express();
 

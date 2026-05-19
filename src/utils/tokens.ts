@@ -2,11 +2,13 @@ import jwt from 'jsonwebtoken';
 import config from '../config/env.js';
 
 export const generateAccessToken = (
-  id: string, 
+  id: string,
   role: 'customer' | 'owner',
   identifier: string
 ) => {
-  return jwt.sign({ id, role, identifier }, config.accessSec!, { expiresIn: '5m' });
+  return jwt.sign({ id, role, identifier }, config.accessSec!, {
+    expiresIn: '5m',
+  });
 };
 
 export const generateRefreshToken = (
@@ -14,5 +16,7 @@ export const generateRefreshToken = (
   role: 'customer' | 'owner',
   identifier: string
 ) => {
-  return jwt.sign({ id, role, identifier }, config.refreshSec!, { expiresIn: '30d' });
+  return jwt.sign({ id, role, identifier }, config.refreshSec!, {
+    expiresIn: '30d',
+  });
 };

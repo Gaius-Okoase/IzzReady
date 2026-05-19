@@ -1,4 +1,4 @@
-import rateLimiter from "express-rate-limit";
+import rateLimiter from 'express-rate-limit';
 
 export const authLimit = rateLimiter({
   windowMs: 1 * 60 * 1000,
