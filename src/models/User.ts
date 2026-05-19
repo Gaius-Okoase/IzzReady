@@ -81,6 +81,8 @@ userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     (ret as any)._id = undefined;
     (ret as any).__v = undefined;
+    (ret as any).password = undefined;
+    (ret as any).refreshToken = undefined;
   },
 });
 
