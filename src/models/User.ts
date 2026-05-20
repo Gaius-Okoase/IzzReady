@@ -3,11 +3,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import type { IUser, IUserMethod } from '../types/types.js';
 
-const userSchema = new mongoose.Schema<
-  IUser,
-  mongoose.Model<IUser>,
-  IUserMethod
->(
+const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod>(
   {
     googleId: {
       type: String,

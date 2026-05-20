@@ -32,8 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/health', (_req, res) => {
   res.status(200).send({
     success: true,
-    message:
-      "Server is healthy and ready. No sleeping on bicycle. Let's get the API started.",
+    message: "Server is healthy and ready. No sleeping on bicycle. Let's get the API started.",
     uptime: process.uptime(),
     environment: config.env,
     timestamp: new Date().toISOString(),

@@ -4,12 +4,7 @@ import { MongooseError } from 'mongoose';
 import zod, { ZodError } from 'zod';
 import config from '../config/env.js';
 
-export const errorHandler: ErrorRequestHandler = async (
-  error,
-  _req,
-  res,
-  _next
-) => {
+export const errorHandler: ErrorRequestHandler = async (error, _req, res, _next) => {
   // Log errors in dev mode
   if (config.isDevelopment) console.log('❌', error.name, error.message);
 

@@ -4,9 +4,7 @@ export const RegisterSchema = zod.object({
   name: zod
     .string({
       error: (iss) =>
-        iss.input === undefined
-          ? 'Please provide your name'
-          : 'Name must be a string',
+        iss.input === undefined ? 'Please provide your name' : 'Name must be a string',
     })
     .trim()
     .min(4, 'Name must be a minimum of 4 characters'),

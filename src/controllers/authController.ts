@@ -4,16 +4,11 @@ import { successResponse } from '../utils/successResponse.js';
 import type { IUser } from '../types/types.js';
 import config from '../config/env.js';
 
-export const registerController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const registerController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userData: IUser = req.body;
 
-    const { user, accessToken, refreshToken } =
-      await createUserService(userData);
+    const { user, accessToken, refreshToken } = await createUserService(userData);
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: config.isProduction,

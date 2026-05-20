@@ -14,12 +14,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     },
     status: {
       type: String,
-      enum: [
-        'unavailable',
-        'coming_soon',
-        'awaiting_confirmation',
-        'izz_ready',
-      ],
+      enum: ['unavailable', 'coming_soon', 'awaiting_confirmation', 'izz_ready'],
       default: 'unavailable',
     },
     timerExpiry: {

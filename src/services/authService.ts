@@ -14,10 +14,7 @@ export const createUserService = async (userData: IUser) => {
   //         ...(phoneNumber ? [{ phoneNumber }] : [])
   //     ]
   // };
-  const findExistingUser = async (
-    email: string | undefined,
-    phoneNumber: string | undefined
-  ) => {
+  const findExistingUser = async (email: string | undefined, phoneNumber: string | undefined) => {
     let user;
     if (phoneNumber) user = await User.findOne({ phoneNumber }).lean();
     if (email) user = await User.findOne({ email }).lean();
@@ -27,10 +24,7 @@ export const createUserService = async (userData: IUser) => {
   const userExists = await findExistingUser(email, phoneNumber);
   console.log(userExists);
   if (userExists)
-    throw new AppError(
-      409,
-      'User already exists. Please log in or reset your password.'
-    );
+    throw new AppError(409, 'User already exists. Please log in or reset your password.');
 
   // Create new user
   const user = await User.create({
