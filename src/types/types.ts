@@ -8,9 +8,11 @@ export interface IUser {
   phoneNumber?: string | undefined;
   password?: string | undefined;
   role: 'customer' | 'owner';
-  isProfileComplete: boolean;
+  isProfileComplete?: boolean | undefined;
   pushNotifToken?: string | undefined;
   refreshToken?: string | undefined;
+  isActive?: boolean,
+  lastLoginAt?: Date
 }
 
 export interface IUserMethod {

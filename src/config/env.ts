@@ -21,6 +21,7 @@ const config = {
   // Google OAuth Credentials
   clientId: process.env.CLIENT_ID,
   clientSec: process.env.CLIENT_SECRET,
+  redirectUri: process.env.REDIRECT_URI,
 
   // CORS
   corsOrigin: process.env.CORS_ORIGIN,

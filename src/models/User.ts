@@ -52,6 +52,16 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
       type: String,
       select: false,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+      required: true
+    },
+    lastLoginAt: {
+      type: Date,
+      default: () => new Date(),
+      required: true
+    }
   },
   {
     timestamps: true,
@@ -60,9 +70,9 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
 
 // pre-save hook
 userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
-  const pw = this.password as string;
-  this.password = await bcrypt.hash(pw, 10);
+  if (!this.isModified('password') || !this.password) return;
+
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 // comparePassword method
@@ -79,6 +89,7 @@ userSchema.set('toJSON', {
     (ret as any).__v = undefined;
     (ret as any).password = undefined;
     (ret as any).refreshToken = undefined;
+    (ret as any).googleId = undefined;
   },
 });
 
