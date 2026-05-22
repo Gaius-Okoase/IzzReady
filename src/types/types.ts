@@ -11,8 +11,8 @@ export interface IUser {
   isProfileComplete?: boolean | undefined;
   pushNotifToken?: string | undefined;
   refreshToken?: string | undefined;
-  isActive?: boolean,
-  lastLoginAt?: Date
+  isActive?: boolean;
+  lastLoginAt?: Date;
 }
 
 export interface IUserMethod {
@@ -41,12 +41,12 @@ export interface IQueue {
 }
 
 export interface LoginDetails {
-  phoneNumber: string,
-  password: string
+  phoneNumber: string;
+  password: string;
 }
 
 export interface DecodedToken {
-  id: string,
-  role: 'owner' | 'customer'
-  identifier: string
+  id: string;
+  role: 'owner' | 'customer';
+  identifier: string;
 }

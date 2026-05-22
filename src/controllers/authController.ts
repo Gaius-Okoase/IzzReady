@@ -1,6 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import { randomBytes } from 'crypto';
-import { createUserService, loginService, processGoogleCallbackService } from '../services/authService.js';
+import {
+  createUserService,
+  loginService,
+  processGoogleCallbackService,
+} from '../services/authService.js';
 import { successResponse } from '../utils/successResponse.js';
 import type { IUser, LoginDetails } from '../types/types.js';
 import config from '../config/env.js';
@@ -29,13 +33,13 @@ export const registerController = async (req: Request, res: Response, next: Next
 export const googleOAuthUrlController = (req: Request, res: Response, next: NextFunction) => {
   try {
     // Get the role and store it
-    const { role } = req.query as {role: 'customer' | 'owner'};
-      res.cookie('role', role, {
+    const { role } = req.query as { role: 'customer' | 'owner' };
+    res.cookie('role', role, {
       httpOnly: true,
       secure: config.isProduction,
       sameSite: 'lax',
-      maxAge: 10 * 60 * 1000
-    })
+      maxAge: 10 * 60 * 1000,
+    });
     // Generate state
     const state = randomBytes(32).toString('base64url');
     // Save state in cookie
@@ -43,39 +47,38 @@ export const googleOAuthUrlController = (req: Request, res: Response, next: Next
       httpOnly: true,
       secure: config.isProduction,
       sameSite: 'lax',
-      maxAge: 10 * 60 * 1000
-    })
+      maxAge: 10 * 60 * 1000,
+    });
     // Define query params
-    const params = new URLSearchParams ({
+    const params = new URLSearchParams({
       client_id: config.clientId!,
       redirect_uri: config.redirectUri!,
       state,
       scope: 'openid email profile',
       response_type: 'code',
-      access_type: 'offline'
-    })
+      access_type: 'offline',
+    });
     // Build OAuth endpoint
-    const authorizationUrl =`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
+    const authorizationUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
     // Redirect user
     res.redirect(authorizationUrl);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const processGoogleCallbackController = async (req: Request, res: Response, next: NextFunction) => {
+export const processGoogleCallbackController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const q: {state?: string, error?: string, code?: string} = req.query;
+    const q: { state?: string; error?: string; code?: string } = req.query;
     const state = req.cookies.oauth_state as string;
-    const role = req.cookies.role as 'customer' | 'owner'
+    const role = req.cookies.role as 'customer' | 'owner';
 
-    const {
-      user, 
-      accessToken, 
-      refreshToken,
-      statusCode,
-      message
-    } = await processGoogleCallbackService(q, state, role);
+    const { user, accessToken, refreshToken, statusCode, message } =
+      await processGoogleCallbackService(q, state, role);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -89,9 +92,9 @@ export const processGoogleCallbackController = async (req: Request, res: Respons
       accessToken,
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const loginController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -103,11 +106,11 @@ export const loginController = async (req: Request, res: Response, next: NextFun
       httpOnly: true,
       secure: config.isProduction,
       sameSite: 'strict',
-      maxAge: 30 * 24 * 60 * 60 * 1000
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    successResponse(res, 200, 'Log in successful.', {user, accessToken})
+    successResponse(res, 200, 'Log in successful.', { user, accessToken });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};

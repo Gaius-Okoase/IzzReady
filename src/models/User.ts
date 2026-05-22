@@ -51,18 +51,18 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
     refreshToken: {
       type: String,
       select: false,
-      required: true
+      required: true,
     },
     isActive: {
       type: Boolean,
       default: true,
-      required: true
+      required: true,
     },
     lastLoginAt: {
       type: Date,
       default: () => new Date(),
-      required: true
-    }
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -81,7 +81,6 @@ userSchema.methods.comparePassword = async function (password: string) {
   const pw = this.password as string;
   return await bcrypt.compare(password, pw);
 };
-
 
 // get virtual id and strip out unneeded fields when send document as JSON
 userSchema.set('toJSON', {

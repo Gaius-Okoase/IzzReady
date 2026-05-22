@@ -24,4 +24,4 @@ export const loginValidator = (req: Request, _res: Response, next: NextFunction)
 
   req.body = result.data;
   return next();
-}
+};

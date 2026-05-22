@@ -49,14 +49,14 @@ export const createUserService = async (userData: IUser) => {
 };
 
 export const processGoogleCallbackService = async (
-  q: {state?: string, error?: string, code?: string},
+  q: { state?: string; error?: string; code?: string },
   state: string,
   role: 'customer' | 'owner'
 ) => {
   // Handle google error
   if (q.error) throw new Error('Something went wrong. Please try again.');
   // Handle state mismatch
-  if(q.state !== state) throw new Error('State mismatch. Possible CSRF attack.')
+  if (q.state !== state) throw new Error('State mismatch. Possible CSRF attack.');
 
   // Generate token payload
   const tokenPayload = {
@@ -65,36 +65,32 @@ export const processGoogleCallbackService = async (
     redirect_uri: config.redirectUri,
     grant_type: 'authorization_code',
     code: q.code,
-  }  
+  };
 
-  //Get access token from google token endpoint  
+  //Get access token from google token endpoint
   const token = await axios.post<{
-    access_token: string,
-    scope: string,
-    token_type: 'Bearer'
-  }>(
-    'https://oauth2.googleapis.com/token',
-    tokenPayload,
-    { headers: { Accept: 'application/json'}}
-  )
-  const access_token = token.data.access_token
+    access_token: string;
+    scope: string;
+    token_type: 'Bearer';
+  }>('https://oauth2.googleapis.com/token', tokenPayload, {
+    headers: { Accept: 'application/json' },
+  });
+  const access_token = token.data.access_token;
 
   // Get user data with access token
   const user = await axios.get<{
-    name: string,
-    email: string,
-    sub: string
-  }>('https://www.googleapis.com/oauth2/v3/userinfo',
-   {
-    headers: { Authorization: `Bearer ${access_token}`}
-   } 
-  )
+    name: string;
+    email: string;
+    sub: string;
+  }>('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
 
   // Check if user exists
-  const userExists = await User.findOne({email: user.data.email})
-  if(userExists) {
+  const userExists = await User.findOne({ email: user.data.email });
+  if (userExists) {
     // Check if user's account is active
-    if(userExists.isActive !== true) throw new AppError(403, 'Forbidden')
+    if (userExists.isActive !== true) throw new AppError(403, 'Forbidden');
     // Generate tokens
     const id = userExists.id;
     const role = userExists.role;
@@ -107,22 +103,22 @@ export const processGoogleCallbackService = async (
 
     // Send success status code and message
     const statusCode = 200;
-    const message = 'Sign in successful'    
-    return { 
+    const message = 'Sign in successful';
+    return {
       user: userExists,
       accessToken,
-      refreshToken, 
-      statusCode, 
-      message
-    }
+      refreshToken,
+      statusCode,
+      message,
+    };
   } else {
     // Generate user data for izzReady app
     const userData = {
       name: user.data.name,
       email: user.data.email,
       googleId: user.data.sub,
-      role
-    }
+      role,
+    };
     // Create new user
     const newUser = await createUserService(userData);
 
@@ -135,25 +131,25 @@ export const processGoogleCallbackService = async (
       refreshToken: newUser.refreshToken,
       accessToken: newUser.accessToken,
       message,
-      statusCode
+      statusCode,
     };
   }
-}
+};
 
 export const loginService = async (userData: LoginDetails) => {
   // Destructure
   const { phoneNumber, password } = userData;
 
   // Find user document
-  const user = await User.findOne({ phoneNumber }).select('+password')
-  if(!user) throw new AppError(401, "Incorrect phone number or password");
+  const user = await User.findOne({ phoneNumber }).select('+password');
+  if (!user) throw new AppError(401, 'Incorrect phone number or password');
 
   // Check if user's account is active
-  if(user.isActive !== true) throw new AppError(403, 'Forbidden')
+  if (user.isActive !== true) throw new AppError(403, 'Forbidden');
 
-  // Check if password is correct  
+  // Check if password is correct
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw new AppError(401, "Incorrect phone number or password");
+  if (!isMatch) throw new AppError(401, 'Incorrect phone number or password');
 
   // Generate tokens and save to db
   const refreshToken = generateRefreshToken(user.id, user.role, user.phoneNumber as string);
@@ -165,9 +161,9 @@ export const loginService = async (userData: LoginDetails) => {
   return {
     user,
     refreshToken,
-    accessToken
-  }
-}
+    accessToken,
+  };
+};
 
 export const logoutService = async (id: string) => {
   //Get user's document
@@ -175,24 +171,21 @@ export const logoutService = async (id: string) => {
     id,
     { refreshToken: null },
     { returnDocument: 'after' }
-  )
+  );
 
   return user;
-}
+};
 
 export const tokenRotationService = async (decodedToken: DecodedToken, refreshToken: string) => {
   // Find user document by id
   const { id, role, identifier } = decodedToken;
 
   const user = await User.findOne({ refreshToken });
-  
+
   // Handle wrong refresh token
   if (!user) {
-    await User.findByIdAndUpdate(
-      id,
-      { refreshToken: null }
-    );
-    throw new AppError(403, 'Token expired. Please log in again.')
+    await User.findByIdAndUpdate(id, { refreshToken: null });
+    throw new AppError(403, 'Token expired. Please log in again.');
   }
 
   // Generate refresh token
@@ -203,5 +196,5 @@ export const tokenRotationService = async (decodedToken: DecodedToken, refreshTo
   user.refreshToken = newRefreshToken;
   await user.save();
 
-  return { newRefreshToken, newAccessToken }
-}
+  return { newRefreshToken, newAccessToken };
+};
