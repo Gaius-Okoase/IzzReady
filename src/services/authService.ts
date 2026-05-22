@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IUser } from '../types/types.js';
+import type { IUser, LoginDetails } from '../types/types.js';
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 //import type { QueryFilter } from 'mongoose';
@@ -140,6 +140,25 @@ export const processGoogleCallbackService = async (
   }
 }
 
-export const loginService = async () => {
-  
+export const loginService = async (userData: LoginDetails) => {
+  const { phoneNumber, password } = userData;
+
+  const user = await User.findOne({ phoneNumber }).select('+password')
+
+  if(!user) throw new AppError(401, "Incorrect phone number or password");
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) throw new AppError(401, "Incorrect phone number or password");
+
+  const refreshToken = generateRefreshToken(user.id, user.role, user.phoneNumber as string);
+  const accessToken = generateAccessToken(user.id, user.role, user.phoneNumber as string);
+
+  user.isActive = true;
+  user.lastLoginAt = new Date();
+  user.refreshToken = refreshToken;
+
+  return {
+    user,
+    refreshToken,
+    accessToken
+  }
 }

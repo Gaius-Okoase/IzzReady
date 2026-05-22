@@ -35,7 +35,12 @@ export interface IFoodItem {
   timerExpiry: Date;
 }
 
-export interface IQuery {
+export interface IQueue {
   userId: mongoose.Types.ObjectId;
   foodItemId: mongoose.Types.ObjectId;
+}
+
+export interface LoginDetails {
+  phoneNumber: string,
+  password: string
 }

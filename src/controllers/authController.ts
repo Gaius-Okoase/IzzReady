@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import { randomBytes } from 'crypto';
-import { createUserService, processGoogleCallbackService } from '../services/authService.js';
+import { createUserService, loginService, processGoogleCallbackService } from '../services/authService.js';
 import { successResponse } from '../utils/successResponse.js';
-import type { IUser } from '../types/types.js';
+import type { IUser, LoginDetails } from '../types/types.js';
 import config from '../config/env.js';
 
 export const registerController = async (req: Request, res: Response, next: NextFunction) => {
@@ -88,6 +88,25 @@ export const processGoogleCallbackController = async (req: Request, res: Respons
       user,
       accessToken,
     });
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const loginController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userData: LoginDetails = req.body;
+
+    const { user, accessToken, refreshToken } = await loginService(userData);
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    successResponse(res, 200, 'Log in successful.', {user, accessToken})
   } catch (error) {
     next(error)
   }

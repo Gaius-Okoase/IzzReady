@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import zod from 'zod';
-import { RegisterSchema } from '../zod_schema/authSchema.js';
+import { LoginSchema, RegisterSchema } from '../zod_schema/authSchema.js';
 
 export const registerValidator = (req: Request, _res: Response, next: NextFunction) => {
   type UserData = zod.infer<typeof RegisterSchema>;
@@ -13,3 +13,15 @@ export const registerValidator = (req: Request, _res: Response, next: NextFuncti
 
   return next();
 };
+
+export const loginValidator = (req: Request, _res: Response, next: NextFunction) => {
+  type LoginDetails = zod.infer<typeof LoginSchema>;
+
+  const userData: LoginDetails = req.body;
+  const result = LoginSchema.safeParse(userData);
+
+  if (!result.success) return next(result.error);
+
+  req.body = result.data;
+  return next();
+}

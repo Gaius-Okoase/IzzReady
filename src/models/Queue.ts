@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import type { IQuery } from '../types/types.js';
+import type { IQueue } from '../types/types.js';
 
-const querySchema = new mongoose.Schema<IQuery>(
+const querySchema = new mongoose.Schema<IQueue>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,

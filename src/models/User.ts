@@ -76,10 +76,11 @@ userSchema.pre('save', async function () {
 });
 
 // comparePassword method
-userSchema.methods.comparePassword = async function (enteredPassword: string) {
+userSchema.methods.comparePassword = async function (password: string) {
   const pw = this.password as string;
-  return await bcrypt.compare(enteredPassword, pw);
+  return await bcrypt.compare(password, pw);
 };
+
 
 // get virtual id and strip out unneeded fields when send document as JSON
 userSchema.set('toJSON', {
