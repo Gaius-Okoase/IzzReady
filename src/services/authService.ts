@@ -1,8 +1,7 @@
 import axios from 'axios';
-import type { IUser, LoginDetails } from '../types/types.js';
+import type { DecodedToken, IUser, LoginDetails } from '../types/types.js';
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
-//import type { QueryFilter } from 'mongoose';
 import { generateAccessToken, generateRefreshToken } from '../utils/tokens.js';
 import config from '../config/env.js';
 
@@ -37,15 +36,14 @@ export const createUserService = async (userData: IUser) => {
   });
 
   // Generate tokens and save refresh token to DB
-  let identifier;
-  if (email) identifier = email;
-  if (phoneNumber) identifier = phoneNumber;
-  const refreshToken = generateRefreshToken(user.id, user.role, identifier!);
-  const accessToken = generateAccessToken(user.id, user.role, identifier!);
+  const identifier = email ?? phoneNumber;
+  if (!identifier) throw new AppError(400, 'Missing identifier for token generation.');
+  const refreshToken = generateRefreshToken(user.id, user.role, identifier);
+  const accessToken = generateAccessToken(user.id, user.role, identifier);
   user.refreshToken = refreshToken;
   user.isProfileComplete = role === 'owner' ? false : true;
   //Save user to DB
-  user.save();
+  await user.save();
 
   return { user, accessToken, refreshToken };
 };
@@ -67,7 +65,6 @@ export const processGoogleCallbackService = async (
     redirect_uri: config.redirectUri,
     grant_type: 'authorization_code',
     code: q.code,
-    access_type: 'offline'
   }  
 
   //Get access token from google token endpoint  
@@ -96,14 +93,17 @@ export const processGoogleCallbackService = async (
   // Check if user exists
   const userExists = await User.findOne({email: user.data.email})
   if(userExists) {
+    // Check if user's account is active
+    if(userExists.isActive !== true) throw new AppError(403, 'Forbidden')
     // Generate tokens
     const id = userExists.id;
     const role = userExists.role;
     const email = userExists.email as string;
     const refreshToken = generateRefreshToken(id, role, email);
     const accessToken = generateAccessToken(id, role, email);
+    userExists.refreshToken = refreshToken;
     userExists.lastLoginAt = new Date();
-    userExists.isActive = true
+    await userExists.save();
 
     // Send success status code and message
     const statusCode = 200;
@@ -141,24 +141,67 @@ export const processGoogleCallbackService = async (
 }
 
 export const loginService = async (userData: LoginDetails) => {
+  // Destructure
   const { phoneNumber, password } = userData;
 
+  // Find user document
   const user = await User.findOne({ phoneNumber }).select('+password')
-
   if(!user) throw new AppError(401, "Incorrect phone number or password");
+
+  // Check if user's account is active
+  if(user.isActive !== true) throw new AppError(403, 'Forbidden')
+
+  // Check if password is correct  
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw new AppError(401, "Incorrect phone number or password");
 
+  // Generate tokens and save to db
   const refreshToken = generateRefreshToken(user.id, user.role, user.phoneNumber as string);
   const accessToken = generateAccessToken(user.id, user.role, user.phoneNumber as string);
-
-  user.isActive = true;
   user.lastLoginAt = new Date();
   user.refreshToken = refreshToken;
+  await user.save();
 
   return {
     user,
     refreshToken,
     accessToken
   }
+}
+
+export const logoutService = async (id: string) => {
+  //Get user's document
+  const user = await User.findByIdAndUpdate(
+    id,
+    { refreshToken: null },
+    { returnDocument: 'after' }
+  )
+
+  return user;
+}
+
+export const tokenRotationService = async (decodedToken: DecodedToken, refreshToken: string) => {
+  // Find user document by id
+  const { id, role, identifier } = decodedToken;
+
+  const user = await User.findOne({ refreshToken });
+  
+  // Handle wrong refresh token
+  if (!user) {
+    await User.findByIdAndUpdate(
+      id,
+      { refreshToken: null }
+    );
+    throw new AppError(403, 'Token expired. Please log in again.')
+  }
+
+  // Generate refresh token
+  const newRefreshToken = generateRefreshToken(id, role, identifier);
+  const newAccessToken = generateAccessToken(id, role, identifier);
+
+  // Save token to db
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  return { newRefreshToken, newAccessToken }
 }

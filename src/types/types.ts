@@ -44,3 +44,9 @@ export interface LoginDetails {
   phoneNumber: string,
   password: string
 }
+
+export interface DecodedToken {
+  id: string,
+  role: 'owner' | 'customer'
+  identifier: string
+}

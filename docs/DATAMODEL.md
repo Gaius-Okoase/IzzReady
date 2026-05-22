@@ -23,6 +23,8 @@ Table users {
   isProfileComplete boolean
   pushNotifToken string
   refreshToken string
+  isActive boolean
+  lastLoginAt date
   createdAt timestamp
   updatedAt timestamp
 }

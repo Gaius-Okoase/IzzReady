@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
     refreshToken: {
       type: String,
       select: false,
+      required: true
     },
     isActive: {
       type: Boolean,

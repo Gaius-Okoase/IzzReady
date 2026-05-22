@@ -40,7 +40,7 @@ app.get('/health', (_req, res) => {
 });
 
 // Routes with rate limiter
-app.use('/auth', authLimit, authRoute);
+app.use('/api/auth', authLimit, authRoute);
 
 // Catch all undefined routes
 app.use((req, res) => {
