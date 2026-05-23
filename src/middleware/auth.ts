@@ -41,3 +41,12 @@ export const authorization = async (req: Request, _res: Response, next: NextFunc
     }
     return next();
 };
+
+export const isOwner = (req: Request, _res: Response, next: NextFunction) => {
+    try {
+        if (req.user.role !== 'customer') throw new AppError(403, 'Unauthorized.')
+    } catch (error) {
+        next(error)
+    }
+    return next()
+}

@@ -9,7 +9,7 @@ import {
   tokenRotationController,
 } from '../controllers/authController.js';
 import { loginValidator, registerValidator } from '../middleware/authValidator.js';
-import { authorization } from '../middleware/authorization.js';
+import { authorization } from '../middleware/auth.js';
 
 const router = express.Router();
 
