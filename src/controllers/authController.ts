@@ -2,10 +2,13 @@ import type { Request, Response, NextFunction } from 'express';
 import { randomBytes } from 'crypto';
 import {
   createUserService,
+  getUserService,
   loginService,
+  logoutService,
   processGoogleCallbackService,
+  tokenRotationService,
 } from '../services/authService.js';
-import { successResponse } from '../utils/successResponse.js';
+import { successResponse } from '../utils/responseHelper.js';
 import type { IUser, LoginDetails } from '../types/types.js';
 import config from '../config/env.js';
 
@@ -19,6 +22,7 @@ export const registerController = async (req: Request, res: Response, next: Next
       secure: config.isProduction,
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/api/auth'
     });
 
     successResponse(res, 201, 'User created successfuly', {
@@ -85,6 +89,7 @@ export const processGoogleCallbackController = async (
       secure: config.isProduction,
       sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/api/auth'
     });
 
     successResponse(res, statusCode, message, {
@@ -114,3 +119,54 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     next(error);
   }
 };
+
+export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user.id;
+
+    await logoutService(id)
+
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/api/auth'
+    })
+
+    successResponse(res, 200, 'Log out successful')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const tokenRotationController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies.refresh_token;
+
+    const {newRefreshToken, newAccessToken} = await tokenRotationService(refreshToken);
+
+    res.cookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/api/auth'
+    });
+    successResponse(res, 200, 'Token refresh successful', { acessToken: newAccessToken });
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getUserController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user.id;
+
+    const user = await getUserService(id)
+
+    successResponse(res, 200, 'User profile retrieved', {user});
+  } catch (error) {
+    next(error)
+  }
+}

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 import type { DecodedToken, IUser, LoginDetails } from '../types/types.js';
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
@@ -91,6 +92,7 @@ export const processGoogleCallbackService = async (
   if (userExists) {
     // Check if user's account is active
     if (userExists.isActive !== true) throw new AppError(403, 'Forbidden');
+    
     // Generate tokens
     const id = userExists.id;
     const role = userExists.role;
@@ -176,25 +178,37 @@ export const logoutService = async (id: string) => {
   return user;
 };
 
-export const tokenRotationService = async (decodedToken: DecodedToken, refreshToken: string) => {
-  // Find user document by id
-  const { id, role, identifier } = decodedToken;
+export const tokenRotationService = async (refreshToken: string) => {
+  try {
+    const { id, role, identifier }= jwt.verify(refreshToken, config.refreshSec!) as DecodedToken
 
-  const user = await User.findOne({ refreshToken });
+    const user = await User.findOne({ refreshToken });
 
-  // Handle wrong refresh token
-  if (!user) {
-    await User.findByIdAndUpdate(id, { refreshToken: null });
-    throw new AppError(403, 'Token expired. Please log in again.');
+    // Handle wrong refresh token
+    if (!user) {
+      await User.findByIdAndUpdate(id, { refreshToken: null }); //Ask about isActive
+      throw new AppError(403, 'Invalid or expired token. Please log in again.');
+    }
+
+    // Generate refresh token
+    const newRefreshToken = generateRefreshToken(id, role, identifier);
+    const newAccessToken = generateAccessToken(id, role, identifier);
+
+    // Save token to db
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
+    return { newRefreshToken, newAccessToken };
+  } catch (error) {
+    if(config.isDevelopment) console.log(error)
+    throw new AppError(500, 'Something went wrong. Please log in again.');
   }
+};
 
-  // Generate refresh token
-  const newRefreshToken = generateRefreshToken(id, role, identifier);
-  const newAccessToken = generateAccessToken(id, role, identifier);
+export const getUserService = async (id: string) => {
+  const user = await User.findById(id);
 
-  // Save token to db
-  user.refreshToken = newRefreshToken;
-  await user.save();
+  if (!user) throw new AppError(404, 'User not found');
 
-  return { newRefreshToken, newAccessToken };
+  return user;
 };

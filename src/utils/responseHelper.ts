@@ -4,7 +4,7 @@ export const successResponse = (
   res: Response,
   statusCode: number,
   message: string,
-  data: object
+  data?: object
 ) => {
   res.status(statusCode).json({
     success: true,
