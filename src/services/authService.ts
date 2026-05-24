@@ -92,7 +92,7 @@ export const processGoogleCallbackService = async (
   if (userExists) {
     // Check if user's account is active
     if (userExists.isActive !== true) throw new AppError(403, 'Forbidden');
-    
+
     // Generate tokens
     const id = userExists.id;
     const role = userExists.role;
@@ -180,7 +180,7 @@ export const logoutService = async (id: string) => {
 
 export const tokenRotationService = async (refreshToken: string) => {
   try {
-    const { id, role, identifier }= jwt.verify(refreshToken, config.refreshSec!) as DecodedToken
+    const { id, role, identifier } = jwt.verify(refreshToken, config.refreshSec!) as DecodedToken;
 
     const user = await User.findOne({ refreshToken });
 
@@ -200,7 +200,7 @@ export const tokenRotationService = async (refreshToken: string) => {
 
     return { newRefreshToken, newAccessToken };
   } catch (error) {
-    if(config.isDevelopment) console.log(error)
+    if (config.isDevelopment) console.log(error);
     throw new AppError(500, 'Something went wrong. Please log in again.');
   }
 };
