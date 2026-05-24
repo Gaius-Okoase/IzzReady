@@ -20,7 +20,7 @@ export interface IUserMethod {
 }
 
 export interface IBukka {
-  ownerId: mongoose.Types.ObjectId;
+  ownerId?: mongoose.Types.ObjectId;
   name: string;
   location: {
     type: 'Point';

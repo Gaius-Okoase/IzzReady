@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
     isProfileComplete: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     pushNotifToken: {
       type: String,
