@@ -4,7 +4,7 @@
 
 ## Overview
 
-IzzReady's data model consists of four entities: **users**, **bukkas**, **food_items**, and **queue_entries**.
+IzzReady's data model consists of four entities: **users**, **bukkas**, **food_catalog**, **food_items**, and **queue_entries**.
 The model is _normalized_, meaning each piece of information is stored once and referenced by ID everywhere else it is needed.
 
 ---
@@ -16,8 +16,8 @@ Table users {
   id string [pk]  // Mongoose auto generated
   googleId string
   name string
-  email string [unique] [sparse]
-  phoneNumber string [unique] [sparse]
+  email string // [unique] [sparse]
+  phoneNumber string // [unique] [sparse]
   password string
   role string
   isProfileComplete boolean
@@ -38,12 +38,24 @@ Table bukkas {
   updatedAt timestamp
 }
 
+Table food_catalog {
+  id string [pk]
+  name string
+  imageUrl string
+  category string // enum: swallow, rice, soup, meat, beans, yam etc
+  createdAt timestamp
+  updatedAt timestamp
+}
+
 Table food_items {
   id string [pk]
   bukkaId string [ref: > bukkas.id]
+  foodCatalogId string [ref: > food_catalog.id]
   name string
-  status string  // enum: unavailable, coming_soon, awaiting_confirmation, izz_ready
-  expiresAt timestamp // formerly named 'timer' as seen on ERD
+  imageUrl string
+  isCustom boolean
+  status string  // enum: unavailable, cooking, awaiting_confirmation, izz_ready
+  cookingTimer timestamp // formerly named 'timer' as seen on ERD
   createdAt timestamp
   updatedAt timestamp
 }
@@ -65,6 +77,11 @@ Table queue_entries {
 
 - One-to-Many
 - A user can own multiple bukkas
+
+**FoodCatalog → FoodItem**
+
+- One-to-Many
+- One food catalog can be referenced by many food items across many bukkas.
 
 **Bukka → FoodItem**
 

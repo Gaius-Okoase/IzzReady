@@ -8,16 +8,28 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
       ref: 'Bukka',
       required: true,
     },
+    foodCatalogId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'FoodCatalog',
+      sparse: true,
+      index: true,
+    },
     name: {
       type: String,
-      required: true,
+    },
+    imageUrl: {
+      type: String,
+    },
+    isCustom: {
+      type: Boolean,
+      default: true,
     },
     status: {
       type: String,
-      enum: ['unavailable', 'coming_soon', 'awaiting_confirmation', 'izz_ready'],
+      enum: ['unavailable', 'cooking', 'awaiting_confirmation', 'izz_ready'],
       default: 'unavailable',
     },
-    timerExpiry: {
+    cookingTimer: {
       type: Date,
     },
   },

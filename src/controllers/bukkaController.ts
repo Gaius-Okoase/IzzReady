@@ -11,7 +11,7 @@ export const bukkaSetupController = async (req: Request, res: Response, next: Ne
     const bukkaData = { name, location };
     const bukka = await bukkaSetupService(userId, bukkaData);
 
-    successResponse(res, 201, 'Bukka created successfully.', {bukka});
+    successResponse(res, 201, 'Bukka created successfully.', { bukka });
   } catch (error) {
     next(error);
   }
