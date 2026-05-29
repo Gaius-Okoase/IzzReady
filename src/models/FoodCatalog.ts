@@ -16,7 +16,6 @@ const foodCatalogSchema = new mongoose.Schema<IFoodCatalog>(
     category: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   {

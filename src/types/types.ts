@@ -45,7 +45,7 @@ export interface IQueue {
 
 export interface IFoodCatalog {
   name: string;
-  imageUrl: string;
+  imageUrl?: string;
   category: string;
   // createdAt: Date - Mongoose auto generated
   // updatedAt: Date - Mongoose auto generated

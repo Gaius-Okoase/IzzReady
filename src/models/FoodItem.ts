@@ -11,8 +11,6 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     foodCatalogId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'FoodCatalog',
-      sparse: true,
-      index: true,
     },
     name: {
       type: String,
@@ -22,7 +20,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     },
     isCustom: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     status: {
       type: String,
@@ -37,6 +35,9 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     timestamps: true,
   }
 );
+
+// Indexes
+foodItemSchema.index({foodCatalogId: 1}, {sparse: true});
 
 foodItemSchema.set('toJSON', {
   virtuals: true,

@@ -25,6 +25,13 @@ const config = {
 
   // CORS
   corsOrigin: process.env.CORS_ORIGIN,
+
+  // Cloudinary
+  cloudiCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudiApiKey: process.env.CLOUDINARY_API_KEY,
+  cloudiApiSec: process.env.CLOUDINARY_API_SECRET,
+  cloudiUrl: process.env.CLOUDINARY_URL
+  
 };
 
 for (const key in config) {
