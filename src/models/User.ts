@@ -64,9 +64,9 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
 );
 
 // Indexes
-userSchema.index({googleId: 1}, {unique: true, sparse: true});
-userSchema.index({email: 1}, {unique: true, sparse: true});
-userSchema.index({phoneNumber: 1}, {unique: true, sparse: true});
+userSchema.index({ googleId: 1 }, { unique: true, sparse: true });
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ phoneNumber: 1 }, { unique: true, sparse: true });
 
 // pre-save hook
 userSchema.pre('save', async function () {

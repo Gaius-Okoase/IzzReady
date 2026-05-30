@@ -37,7 +37,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
 );
 
 // Indexes
-foodItemSchema.index({foodCatalogId: 1}, {sparse: true});
+foodItemSchema.index({ foodCatalogId: 1 }, { sparse: true });
 
 foodItemSchema.set('toJSON', {
   virtuals: true,

@@ -30,8 +30,7 @@ const config = {
   cloudiCloudName: process.env.CLOUDINARY_CLOUD_NAME,
   cloudiApiKey: process.env.CLOUDINARY_API_KEY,
   cloudiApiSec: process.env.CLOUDINARY_API_SECRET,
-  cloudiUrl: process.env.CLOUDINARY_URL
-  
+  cloudiUrl: process.env.CLOUDINARY_URL,
 };
 
 for (const key in config) {
