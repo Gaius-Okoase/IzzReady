@@ -6,7 +6,7 @@ import { AppError } from '../utils/AppError.js';
 export const bukkaSetupService = async (userId: string, bukkaData: IBukka) => {
   const { name, location } = bukkaData;
   const ownerId = userId;
-  
+
   // Confirm user exists and has an active account
   const user = await User.findById(userId);
   if (!user) throw new AppError(401, 'Unauthorized. User does not exist.');

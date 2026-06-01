@@ -30,14 +30,25 @@ export interface IBukka {
 
 export interface IFoodItem {
   bukkaId: mongoose.Types.ObjectId;
-  name: string;
-  status: 'unavailable' | 'coming_soon' | 'awaiting_confirmation' | 'izz_ready';
-  timerExpiry: Date;
+  foodCatalogId?: mongoose.Types.ObjectId | undefined;
+  name?: string | undefined;
+  imageUrl?: string | undefined;
+  isCustom: boolean;
+  status: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
+  cookingTimer: Date;
 }
 
 export interface IQueue {
   userId: mongoose.Types.ObjectId;
   foodItemId: mongoose.Types.ObjectId;
+}
+
+export interface IFoodCatalog {
+  name: string;
+  imageUrl?: string;
+  category: string;
+  // createdAt: Date - Mongoose auto generated
+  // updatedAt: Date - Mongoose auto generated
 }
 
 export interface LoginDetails {

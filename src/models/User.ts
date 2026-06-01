@@ -7,8 +7,6 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
   {
     googleId: {
       type: String,
-      unique: true,
-      sparse: true,
     },
     name: {
       type: String,
@@ -20,14 +18,10 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
-      unique: true,
-      sparse: true,
     },
     phoneNumber: {
       type: String,
       trim: true,
-      unique: true,
-      sparse: true,
     },
     password: {
       type: String,
@@ -68,6 +62,11 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
     timestamps: true,
   }
 );
+
+// Indexes
+userSchema.index({ googleId: 1 }, { unique: true, sparse: true });
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ phoneNumber: 1 }, { unique: true, sparse: true });
 
 // pre-save hook
 userSchema.pre('save', async function () {
