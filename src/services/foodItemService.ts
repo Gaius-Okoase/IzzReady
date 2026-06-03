@@ -1,19 +1,23 @@
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import { FoodItem } from "../models/FoodItem.js";
 import { Bukka } from "../models/Bukka.js";
 import { AppError } from "../utils/AppError.js";
 // import { IFoodItem } from "../types/types.js";
 
-export const createFoodItem = async (bukkaId: mongoose.Types.ObjectId, foodItemIds: mongoose.Types.ObjectId[]) => {
+export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => {
+    // Convert string types to mongoose Type ObjectId
+    const bukkaObjectId = new Types.ObjectId(bukkaId);
+    const foodItemObjectIds = foodItemIds.map(itemId => new Types.ObjectId(itemId));
+
     // Confirm bukka exists
     const bukka = await Bukka.findById(bukkaId);
     if (!bukka) throw new AppError (404, 'Bukka not found. Food item creation failed.');
 
     // Create array of update one operations to be passed to mongoose
-    const foodItems = foodItemIds.map(itemId => ({
+    const foodItems = foodItemObjectIds.map(itemId => ({
         updateOne: {
-            filter: {bukkaId, foodCatalogId: itemId},
-            update: { $set: { bukkaId, foodCatalogId: itemId } },
+            filter: {bukkaObjectId, foodCatalogId: itemId},
+            update: { $set: { bukkaObjectId, foodCatalogId: itemId } },
             upsert: true
         }
     }));
