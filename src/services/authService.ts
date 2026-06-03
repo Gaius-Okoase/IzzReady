@@ -16,15 +16,17 @@ export const createUserService = async (userData: IUser) => {
   //         ...(phoneNumber ? [{ phoneNumber }] : [])
   //     ]
   // };
-  const findExistingUser = async (email: string | undefined, phoneNumber: string | undefined) => {
+  const findExistingUser = async (email?: string, phoneNumber?: string) => {
     let user;
     if (phoneNumber) user = await User.findOne({ phoneNumber }).lean();
     if (email) user = await User.findOne({ email }).lean();
     return user;
   };
+
   const userExists = await findExistingUser(email, phoneNumber);
   if (userExists)
     throw new AppError(409, 'User already exists. Please log in or reset your password.');
+
 
   // Create new user
   const user = await User.create({
@@ -43,6 +45,7 @@ export const createUserService = async (userData: IUser) => {
   const accessToken = generateAccessToken(user.id, user.role, identifier);
   user.refreshToken = refreshToken;
   user.isProfileComplete = role === 'owner' ? false : true;
+
   //Save user to DB
   await user.save();
 
