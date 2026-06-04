@@ -117,6 +117,8 @@ export const processGoogleCallbackService = async (
       message,
     };
   } else {
+    // TODO: Check if the user has a role
+
     // Generate user data for izzReady app
     const userData = {
       name: user.data.name,

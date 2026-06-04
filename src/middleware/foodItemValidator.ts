@@ -1,11 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
-import { createFoodItemsSchema } from "../zod_schema/foodItemSchema.js";
+import z from 'zod';
+import { FoodItemIdsSchema } from "../zod_schema/foodItemSchema.js";
 
 export const createFoodItemsValidator = (req: Request, _res: Response, next: NextFunction) => {
-    const data = req.body;
-    const result = createFoodItemsSchema.safeParse(data)
+    type FoodItemIds = z.infer<typeof FoodItemIdsSchema>
+    const data: FoodItemIds = req.body;
 
-    if(!result.success) return result.error;
+    const result = FoodItemIdsSchema.safeParse(data)
+
+    if(!result.success) return next(result.error);
 
     req.body = data;
     

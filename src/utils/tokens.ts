@@ -7,7 +7,7 @@ export const generateAccessToken = (
   identifier: string
 ) => {
   return jwt.sign({ id, role, identifier }, config.accessSec!, {
-    expiresIn: '5m',
+    expiresIn: '20m',
   });
 };
 

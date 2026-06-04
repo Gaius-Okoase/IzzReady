@@ -8,7 +8,7 @@ export const bukkaSetupValidator = async (req: Request, _res: Response, next: Ne
 
   const result = BukkaSetupSchema.safeParse(bukkaData);
 
-  if (!result.success) return result.error;
+  if (!result.success) return next(result.error);
 
   req.body = bukkaData;
 
