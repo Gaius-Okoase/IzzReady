@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { getFoodCatalogController } from "../controllers/foodCatalog.js";
+import { Router } from 'express';
+import { getFoodCatalogController } from '../controllers/foodCatalog.js';
 
 const router = Router();
 
-router.get('/', getFoodCatalogController)
+router.get('/', getFoodCatalogController);
 
 export default router;

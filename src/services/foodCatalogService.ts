@@ -1,7 +1,7 @@
-import { FoodCatalog } from "../models/FoodCatalog.js";
+import { FoodCatalog } from '../models/FoodCatalog.js';
 
 export const getFoodCatalog = async () => {
-    const foodCatalog = await FoodCatalog.find({}).select('name imageUrl id category');
+  const foodCatalog = await FoodCatalog.find({}).select('name imageUrl id category');
 
-    return foodCatalog;
-}
+  return foodCatalog;
+};

@@ -14,8 +14,8 @@ export const createBukkaController = asyncHandler(async (req: Request, res: Resp
   successResponse(res, 201, 'Bukka created successfully.', bukka);
 });
 
-export const getOwnerBukkasController = asyncHandler( async (req: Request, res: Response) => {
+export const getOwnerBukkasController = asyncHandler(async (req: Request, res: Response) => {
   const ownerId = req.user.id;
   const bukkas = await getOwnerBukkas(ownerId);
-  successResponse(res, 200, 'Owner\'s bukka(s) retrieved successfully.', bukkas);
-})
+  successResponse(res, 200, "Owner's bukka(s) retrieved successfully.", bukkas);
+});

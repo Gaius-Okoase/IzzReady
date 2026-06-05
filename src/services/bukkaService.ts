@@ -20,7 +20,7 @@ export const createBukkaService = async (userId: string, bukkaData: IBukka) => {
   const bukka = await Bukka.create({ ownerId, name, location });
 
   // Mark user proile as complete
-  if(user.isProfileComplete === false) user.isProfileComplete = true;
+  if (user.isProfileComplete === false) user.isProfileComplete = true;
   user.save();
 
   return bukka;
@@ -29,7 +29,8 @@ export const createBukkaService = async (userId: string, bukkaData: IBukka) => {
 export const getOwnerBukkas = async (ownerId: string) => {
   const bukkas = await Bukka.find({ ownerId });
 
-  if(bukkas.length === 0) throw new AppError(404, 'You have no bukka. Create a bukka to continue.')
+  if (bukkas.length === 0)
+    throw new AppError(404, 'You have no bukka. Create a bukka to continue.');
 
   return bukkas;
-}
+};

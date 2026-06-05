@@ -27,7 +27,6 @@ export const createUserService = async (userData: IUser) => {
   if (userExists)
     throw new AppError(409, 'User already exists. Please log in or reset your password.');
 
-
   // Create new user
   const user = await User.create({
     googleId,

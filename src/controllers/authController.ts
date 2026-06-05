@@ -31,7 +31,7 @@ export const registerController = asyncHandler(async (req: Request, res: Respons
   });
 });
 
-export const googleOAuthUrlController = asyncHandler((req: Request, res:Response) => {
+export const googleOAuthUrlController = asyncHandler((req: Request, res: Response) => {
   // Get the role and store it
   const { role } = req.query as { role: 'customer' | 'owner' };
   res.cookie('role', role, {

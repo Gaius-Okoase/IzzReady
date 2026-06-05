@@ -1,5 +1,5 @@
 import z from 'zod';
 
 export const FoodItemIdsSchema = z.object({
-    foodItemIds: z.array(z.string()).min(1, "Must contain at least one food item.")
+  foodItemIds: z.array(z.string()).min(1, 'Must contain at least one food item.'),
 });
