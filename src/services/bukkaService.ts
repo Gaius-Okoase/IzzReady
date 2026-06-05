@@ -1,16 +1,14 @@
 import { Bukka } from '../models/Bukka.js';
 import { User } from '../models/User.js';
-import type { IBukka } from '../types/types.js';
+import type { IBukka, IUpdateBukka } from '../types/types.js';
 import { AppError } from '../utils/AppError.js';
 
-export const createBukkaService = async (userId: string, bukkaData: IBukka) => {
+export const createBukkaService = async (ownerId: string, bukkaData: IBukka) => {
   const { name, location } = bukkaData;
-  const ownerId = userId;
 
-  // Confirm user exists and has an active account
-  const user = await User.findById(userId);
+  // Find user's account
+  const user = await User.findById(ownerId);
   if (!user) throw new AppError(401, 'Unauthorized. User does not exist.');
-  if (user.isActive !== true) throw new AppError(403, 'Forbidden');
 
   // Check if owner already has a bukka
   const ownerExists = await Bukka.findOne({ ownerId }).lean();
@@ -33,4 +31,34 @@ export const getOwnerBukkas = async (ownerId: string) => {
     throw new AppError(404, 'You have no bukka. Create a bukka to continue.');
 
   return bukkas;
+};
+
+export const getBukkaDetails = async (bukkaId: string) => {
+  const bukka = await Bukka.findOne({ _id: bukkaId });
+
+  if (!bukka) throw new AppError(404, 'Bukka not found.');
+
+  return bukka;
+};
+
+export const updateBukkaDetails = async (
+  ownerId: string,
+  bukkaId: string,
+  bukkaData: IUpdateBukka
+) => {
+  // Find bukka and update
+  const bukka = await Bukka.findOneAndUpdate({ _id: bukkaId, ownerId }, bukkaData, {
+    returnDocument: 'after',
+  });
+
+  if (!bukka) throw new AppError(404, 'Bukka not found.');
+
+  return bukka;
+};
+
+export const deleteBukka = async (ownerId: string, bukkaId: string) => {
+  // Find bukka and delete it
+  await Bukka.findOneAndDelete({ _id: bukkaId, ownerId });
+
+  return;
 };

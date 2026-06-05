@@ -28,6 +28,14 @@ export interface IBukka {
   };
 }
 
+export interface IUpdateBukka {
+  name?: string;
+  location?: {
+    type: 'Point';
+    coordinates: [number];
+  };
+}
+
 export interface IFoodItem {
   bukkaId: mongoose.Types.ObjectId;
   foodCatalogId?: mongoose.Types.ObjectId | undefined;
