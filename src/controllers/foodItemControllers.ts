@@ -19,4 +19,4 @@ export const getFoodMenuController = asyncHandler(async(req: Request, res: Respo
     : 'Food menu retreived successfully.';
 
     successResponse(res, 200, message, foodItems);
-})
+});

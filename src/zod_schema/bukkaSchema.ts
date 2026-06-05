@@ -3,6 +3,7 @@ import z from 'zod';
 export const BukkaSetupSchema = z.object({
   name: z
     .string('Bukka name must be a string')
+    .trim()
     .min(1, 'Please enter your bukka name')
     .max(50, 'Bukka name too long.'),
   location: z.object({
