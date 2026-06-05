@@ -129,7 +129,7 @@ export const tokenRotationController = asyncHandler(async (req: Request, res: Re
     maxAge: 30 * 24 * 60 * 60 * 1000,
     path: '/api/auth',
   });
-  successResponse(res, 200, 'Token refresh successful', { acessToken: newAccessToken });
+  successResponse(res, 200, 'Token refresh successful', { accessToken: newAccessToken });
 });
 
 export const getUserController = asyncHandler(async (req: Request, res: Response) => {

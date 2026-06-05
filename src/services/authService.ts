@@ -59,7 +59,7 @@ export const processGoogleCallbackService = async (
   // Handle google error
   if (q.error) throw new Error('Something went wrong. Please try again.');
   // Handle state mismatch
-  if (q.state !== state) throw new Error('State mismatch. Possible CSRF attack.');
+  if (q.state !== state) throw new AppError(403, 'State mismatch. Possible CSRF attack.');
 
   // Generate token payload
   const tokenPayload = {

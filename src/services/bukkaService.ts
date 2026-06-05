@@ -10,7 +10,7 @@ export const createBukkaService = async (userId: string, bukkaData: IBukka) => {
   // Confirm user exists and has an active account
   const user = await User.findById(userId);
   if (!user) throw new AppError(401, 'Unauthorized. User does not exist.');
-  if (user.isActive !== true) throw new AppError(401, 'Forbidden');
+  if (user.isActive !== true) throw new AppError(403, 'Forbidden');
 
   // Check if owner already has a bukka
   const ownerExists = await Bukka.findOne({ ownerId }).lean();

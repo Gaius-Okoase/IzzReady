@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: IzzReady API
+  description: OpenAPI specification generated from the codebase. Based strictly on route/controller/service/schema/type definitions in the repository.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+        data:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [owner, customer]
+        isProfileComplete:
+          type: boolean
+          nullable: true
+        pushNotifToken:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+          nullable: true
+        lastLoginAt:
+          type: string
+          format: date-time
+    Register:
+      type: object
+      required: [name, phoneNumber, password, role]
+      properties:
+        name:
+          type: string
+          minLength: 4
+        phoneNumber:
+          type: string
+          description: Nigeria phone number matching /^(+234|0)[789][01]\d{8}$/
+        password:
+          type: string
+          minLength: 6
+        role:
+          type: string
+          enum: [customer, owner]
+    Login:
+      type: object
+      required: [phoneNumber, password]
+      properties:
+        phoneNumber:
+          type: string
+        password:
+          type: string
+    LocationPoint:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [Point]
+        coordinates:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+    Bukka:
+      type: object
+      required: [name, location]
+      properties:
+        ownerId:
+          type: string
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/LocationPoint'
+    BukkaSetup:
+      type: object
+      required: [name, location]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        location:
+          $ref: '#/components/schemas/LocationPoint'
+    FoodCatalogItem:
+      type: object
+      properties:
+        name:
+          type: string
+        imageUrl:
+          type: string
+        category:
+          type: string
+        id:
+          type: string
+    FoodItemIds:
+      type: object
+      required: [foodItemIds]
+      properties:
+        foodItemIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+    FoodItem:
+      type: object
+      properties:
+        bukkaId:
+          type: string
+        foodCatalogId:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        isCustom:
+          type: boolean
+        status:
+          type: string
+          enum: [unavailable, cooking, awaiting_confirmation, izz_ready]
+        cookingTimer:
+          type: string
+          format: date-time
+    BulkWriteResult:
+      type: object
+      properties:
+        upsertedCount:
+          type: integer
+        upsertedIds:
+          type: object
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Validation or missing identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/google:
+    get:
+      summary: Start Google OAuth
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: role
+          schema:
+            type: string
+            enum: [customer, owner]
+      responses:
+        '302':
+          description: Redirect to Google OAuth endpoint (sets oauth cookies)
+  /api/auth/google/callback:
+    get:
+      summary: Google OAuth callback
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: state
+          schema:
+            type: string
+        - in: query
+          name: code
+          schema:
+            type: string
+        - in: query
+          name: error
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sign in successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '201':
+          description: User created via Google
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          description: Forbidden (inactive user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server or token exchange error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/login:
+    post:
+      summary: Login with phone number and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Incorrect phone number or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden (inactive account)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/logout:
+    post:
+      summary: Logout current user
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized (missing/invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '410':
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/refresh-token:
+    post:
+      summary: Rotate refresh token
+      tags: [Auth]
+      requestBody:
+        description: Must include `refresh_token` cookie (HTTP-only)
+      responses:
+        '200':
+          description: Token rotated; returns new access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/me:
+    get:
+      summary: Get current user profile
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/create:
+    post:
+      summary: Create a Bukka (owner only)
+      tags: [Bukkas]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukkaSetup'
+      responses:
+        '201':
+          description: Bukka created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized or user missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden (inactive account or not owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Owner already has a bukka
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/me:
+    get:
+      summary: Get bukka(s) for owner
+      tags: [Bukkas]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Owner bukka(s) retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: No bukka found for owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items:
+    post:
+      summary: Add food items to bukka (owner only)
+      tags: [FoodItems]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItemIds'
+      responses:
+        '201':
+          description: Food items upserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Unknown food items provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get food menu items for bukka (owner only)
+      tags: [FoodItems]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Food menu retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/food-catalog:
+    get:
+      summary: Get food catalog (owner only)
+      tags: [FoodCatalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Food catalog list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden (not owner or inactive account)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+tags:
+  - name: Auth
+  - name: Bukkas
+  - name: FoodItems
+  - name: FoodCatalog
