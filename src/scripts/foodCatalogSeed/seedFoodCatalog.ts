@@ -3,7 +3,7 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 import config from '../../config/env.js';
 import { FoodCatalog } from '../../models/FoodCatalog.js';
-import seeds from '../foodCatalog.json' with { type: 'json' };
+import seeds from './foodCatalog.json' with { type: 'json' };
 import mongoose from 'mongoose';
 
 // Extract the food items from catalog

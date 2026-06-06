@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Mama Titi's Kitchen",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3792, 6.5244]
+    }
+  },
+  {
+    "name": "Iya Basira Bukka",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3801, 6.5251]
+    }
+  },
+  {
+    "name": "Alhaja's Food House",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3947, 6.4541]
+    }
+  },
+  {
+    "name": "Mama Ngozi Canteen",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3498, 6.5958]
+    }
+  },
+  {
+    "name": "Iya Ibeji Food Spot",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3742, 6.5096]
+    }
+  },
+  {
+    "name": "Bisi's Place",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.5852, 6.4698]
+    }
+  },
+  {
+    "name": "Mama Emeka's Bukka",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.3845, 6.5278]
+    }
+  },
+  {
+    "name": "Iya Risi Canteen",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.4001, 6.4350]
+    }
+  },
+  {
+    "name": "Aunty Comfort's Kitchen",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.2800, 6.6200]
+    }
+  },
+  {
+    "name": "Mama Chidi Food House",
+    "location": {
+      "type": "Point",
+      "coordinates": [3.6200, 6.4300]
+    }
+  }
+]

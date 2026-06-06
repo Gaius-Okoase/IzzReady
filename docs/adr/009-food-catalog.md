@@ -1,4 +1,4 @@
-# Architecture Decision Record (ADR) 015 — Food Catalog
+# Architecture Decision Record (ADR) 009 — Food Catalog
 
 ## Problem
 
