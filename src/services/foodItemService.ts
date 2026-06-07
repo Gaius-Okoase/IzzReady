@@ -22,8 +22,8 @@ export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => 
   // Create array of update one operations to be passed to mongoose
   const foodItems = foodItemObjectIds.map((itemId) => ({
     updateOne: {
-      filter: { bukkaId: bukkaObjectId, foodCatalogId: itemId },
-      update: { $set: { bukkaId: bukkaObjectId, foodCatalogId: itemId } },
+      filter: { bukkaId: bukkaObjectId, item: itemId },
+      update: { $set: { bukkaId: bukkaObjectId, item: itemId } },
       upsert: true,
     },
   }));
@@ -39,7 +39,7 @@ export const getFoodMenuItems = async (bukkaId: string) => {
   const bukka = await Bukka.findById(bukkaId).lean();
   if (!bukka) throw new AppError(404, 'Bukka not found. Food item creation failed.');
 
-  const foodMenu = await FoodItem.find({ bukkaId });
+  const foodMenu = await FoodItem.find({ bukkaId }).populate('item', 'name imageUrl category');
 
   return foodMenu;
 };

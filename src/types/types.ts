@@ -38,7 +38,7 @@ export interface IUpdateBukka {
 
 export interface IFoodItem {
   bukkaId: mongoose.Types.ObjectId;
-  foodCatalogId?: mongoose.Types.ObjectId | undefined;
+  item?: mongoose.Types.ObjectId | undefined;
   name?: string | undefined;
   imageUrl?: string | undefined;
   isCustom: boolean;
