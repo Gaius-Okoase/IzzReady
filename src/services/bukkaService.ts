@@ -34,7 +34,7 @@ export const getOwnerBukkas = async (ownerId: string) => {
 };
 
 export const getBukkaDetails = async (bukkaId: string) => {
-  const bukka = await Bukka.findOne({ _id: bukkaId });
+  const bukka = await Bukka.findOne({ _id: bukkaId }).select('-ownerId');
 
   if (!bukka) throw new AppError(404, 'Bukka not found.');
 
@@ -62,3 +62,18 @@ export const deleteBukka = async (ownerId: string, bukkaId: string) => {
 
   return;
 };
+
+export const getSurroundingBukkas = async (lon: number, lat: number) => {
+  console.log(`lon:`, lon, 'lat:', lat)
+  const bukkas = await Bukka.find({ location: {
+    $nearSphere: {
+      $geometry : {
+        type: "Point",
+        coordinates: [lon, lat]
+      },
+      $maxDistance: 1500
+    }
+  }}).select('-ownerId')
+
+  return bukkas;
+}

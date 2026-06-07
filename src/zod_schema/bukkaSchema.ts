@@ -31,3 +31,8 @@ export const UpdateBukkaSchema = z.object({
     })
     .optional(),
 });
+
+export const CoordinatesSchemas = z.object({
+  lat: z.coerce.number('Invalid coords').min(-90, 'Invalid lat coords').max(90, 'Invalid lat coords'),
+  lon: z.coerce.number('Invalid coords').min(-180, 'Invalid long coords').max(180, 'Invlaid long coords')
+});

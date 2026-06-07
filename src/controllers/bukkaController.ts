@@ -9,6 +9,7 @@ import {
   getOwnerBukkas,
   getBukkaDetails,
   updateBukkaDetails,
+  getSurroundingBukkas,
 } from '../services/bukkaService.js';
 
 export const createBukkaController = asyncHandler(async (req: Request, res: Response) => {
@@ -53,3 +54,14 @@ export const deleteBukkaController = asyncHandler(async (req: Request, res: Resp
 
   successResponse(res, 200, 'Bukka deletion successful.');
 });
+
+export const getSurroundingBukkasController = asyncHandler( async (req: Request, res: Response) => {
+  console.log(req.query)
+  const lon = Number(req.query.lon);
+  const lat = Number(req.query.lat);
+  console.log('lon:', lon, 'lat:', lat)
+
+  const bukkas = await getSurroundingBukkas(lon, lat);
+
+  successResponse(res, 200, 'Bukkas retrieved successfully.', bukkas)
+})
