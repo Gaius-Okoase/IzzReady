@@ -80,7 +80,7 @@ export interface IUpdateFoodItem {
   name?: string | undefined;
   imageUrl?: string | undefined;
   status?: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
-  cookingTimer?: Date;
+  cookingTimer?: number;
 }
 
 export interface FoodMenuQueryOptions {

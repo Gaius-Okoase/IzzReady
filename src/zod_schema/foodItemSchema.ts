@@ -36,7 +36,7 @@ export const FoodItemStatusSchema = z.object({
   status: z.optional(
     z.literal(['unavailable', 'cooking', 'izz_ready'], 'Select a valid food status')
   ),
-  cookingTimer: z.optional(z.date()),
+  cookingTimer: z.optional(z.number().min(1)),
 });
 
 export const FoodMenuQuerySchema = z.object({

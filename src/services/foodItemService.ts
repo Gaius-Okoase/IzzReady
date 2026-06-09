@@ -108,8 +108,9 @@ export const updateFoodItem = async (
 
   // Update 'cooking' status confirming status is 'cooking'
   if (cookingTimer && status === 'cooking') {
+    item.cookingTimer = new Date(Date.now() + (cookingTimer * 60 * 1000));
     item.status = status;
-    item.cookingTimer = cookingTimer;
+    
   }
 
   await item.save();
