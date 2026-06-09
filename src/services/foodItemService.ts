@@ -1,10 +1,10 @@
-import { Types } from 'mongoose';
+import { Types, type QueryFilter } from 'mongoose';
 import { FoodItem } from '../models/FoodItem.js';
 import { Bukka } from '../models/Bukka.js';
 import { FoodCatalog } from '../models/FoodCatalog.js';
 import { AppError } from '../utils/AppError.js';
-import type { ICustomFoodItem, IUpdateFoodItem } from '../types/types.js';
-// import { IFoodItem } from "../types/types.js";
+import type { FoodMenuQueryOptions, ICustomFoodItem, IUpdateFoodItem, IFoodItem } from '../types/types.js';
+// import type { IFoodItem } from "../types/types.js";
 
 export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => {
   // Confirm bukka exists
@@ -51,17 +51,30 @@ export const createCustomFoodItem = async (bukkaId: string, itemData: ICustomFoo
     isCustom: true,
   });
 
-  return await item.populate('bukkaId', 'name');
+  return item;
 };
 
-export const getFoodMenuItems = async (bukkaId: string) => {
+export const getFoodMenuItems = async (bukkaId: string, query: FoodMenuQueryOptions) => {
   // Confirm bukka exists
   const bukka = await Bukka.findById(bukkaId).lean();
   if (!bukka) throw new AppError(404, 'Bukka does not exist.');
 
-  const foodMenu = await FoodItem.find({ bukkaId })
-    .populate('item', 'name imageUrl category')
-    .populate('bukkaId', 'name');
+  // Destructure query options
+  const {status, category} = query;
+  
+  // Initialize filter options object with mandatory bukkaId
+  const options: QueryFilter<IFoodItem> = {bukkaId}
+
+  // Insert optional filter properties
+  const formattedCategory = category?.trim()?.toLocaleLowerCase()
+  const items = formattedCategory ? await FoodCatalog.find({category: formattedCategory}).lean() : null
+  const itemIds = items ? items.map(item => item._id) : null
+  if (itemIds) options.item = {$in : itemIds}
+  if (status) options.status = status
+
+  // Retrieve food menu
+  const foodMenu = await FoodItem.find(options)
+  .populate('item', 'name imageUrl category')
 
   return foodMenu;
 };
@@ -101,7 +114,7 @@ export const updateFoodItem = async (
 
   await item.save();
 
-  return (await item.populate('item', 'name imageUrl category')).populate('bukkaId', 'name');
+  return await item.populate('item', 'name imageUrl category');
 };
 
 export const deleteFoodItem = async (bukkaId: string, itemId: string) => {

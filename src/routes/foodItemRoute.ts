@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { isOwner } from '../middleware/auth.js';
 import {
   createFoodItemsValidator,
+  foodMenuQueryValidator,
   updateFoodItemDetailValidator,
   updateFoodItemStatusValidator,
 } from '../middleware/foodItemValidator.js';
@@ -40,7 +41,7 @@ const upload = multer({
 
 // ROUTES
 router.post('/create', isOwner, createFoodItemsValidator, createFoodItemsController);
-router.get('/', getFoodMenuController);
+router.get('/', foodMenuQueryValidator,getFoodMenuController);
 router.post(
   '/custom',
   isOwner,

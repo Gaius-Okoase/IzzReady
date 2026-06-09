@@ -4,6 +4,7 @@ import {
   CustomFoodItemSchema,
   FoodItemDetailsSchema,
   FoodItemIdsSchema,
+  FoodMenuQuerySchema,
   FoodItemStatusSchema,
 } from '../zod_schema/foodItemSchema.js';
 
@@ -19,6 +20,18 @@ export const createFoodItemsValidator = (req: Request, _res: Response, next: Nex
 
   return next();
 };
+
+export const foodMenuQueryValidator = (req: Request, _res: Response, next: NextFunction) => {
+  type QueryValidator = z.infer<typeof FoodMenuQuerySchema>;
+
+  const query: QueryValidator = req.query;
+
+  const result = FoodMenuQuerySchema.safeParse(query);
+
+  if (!result.success) return next(result.error);
+
+  return next();
+}
 
 export const createCustomFoodItemValidator = (req: Request, _res: Response, next: NextFunction) => {
   type CustomFoodItem = z.infer<typeof CustomFoodItemSchema>;

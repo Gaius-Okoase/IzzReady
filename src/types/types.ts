@@ -82,3 +82,9 @@ export interface IUpdateFoodItem {
   status?: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
   cookingTimer?: Date;
 }
+
+export interface FoodMenuQueryOptions {
+  name?: string | undefined,
+  status?: 'unavailable' | 'cooking' | 'izz_ready' | undefined,
+  category?: string | undefined
+}

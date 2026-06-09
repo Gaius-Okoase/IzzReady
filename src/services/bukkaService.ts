@@ -64,7 +64,7 @@ export const deleteBukka = async (ownerId: string, bukkaId: string) => {
 };
 
 export const getSurroundingBukkas = async (lon: number, lat: number) => {
-  console.log(`lon:`, lon, 'lat:', lat);
+  // TODO: Fetch for bukkas by the food on their menu
   const bukkas = await Bukka.find({
     location: {
       $nearSphere: {

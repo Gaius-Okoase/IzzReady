@@ -8,7 +8,7 @@ import {
 } from '../services/foodItemService.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/responseHelper.js';
-import type { ICustomFoodItem, IUpdateFoodItem } from '../types/types.js';
+import type { ICustomFoodItem, IUpdateFoodItem, FoodMenuQueryOptions } from '../types/types.js';
 
 export const createFoodItemsController = asyncHandler(async (req: Request, res: Response) => {
   const bukkaId = req.params.bukkaId as string;
@@ -25,10 +25,11 @@ export const createFoodItemsController = asyncHandler(async (req: Request, res: 
 
 export const getFoodMenuController = asyncHandler(async (req: Request, res: Response) => {
   const bukkaId = req.params.bukkaId as string;
-  const foodItems = await getFoodMenuItems(bukkaId);
+  const query: FoodMenuQueryOptions = req.query;
+  const foodItems = await getFoodMenuItems(bukkaId, query);
   const message =
     foodItems.length === 0
-      ? 'Your menu is empty. Add food items.'
+      ? 'Food menu is empty.'
       : 'Food menu retreived successfully.';
 
   successResponse(res, 200, message, foodItems);
