@@ -98,7 +98,7 @@ export const updateFoodItem = async (
     item.imageUrl = imageUrl;
   }
 
-  // Clear cooking timer for unavailable and izz_ready
+  // Clear cooking timer and queue entries for unavailable and izz_ready
   if (status === 'unavailable' || status === 'izz_ready') {
     item.status = status;
     item.cookingTimer = null;
@@ -112,7 +112,6 @@ export const updateFoodItem = async (
   if (cookingTimer && status === 'cooking') {
     item.cookingTimer = new Date(Date.now() + (cookingTimer * 60 * 1000));
     item.status = status;
-    
   }
 
   await item.save();
