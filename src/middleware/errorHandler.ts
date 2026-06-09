@@ -2,8 +2,15 @@ import type { ErrorRequestHandler } from 'express';
 import { AppError } from '../utils/AppError.js';
 import { MongooseError } from 'mongoose';
 import zod, { ZodError } from 'zod';
+import { MulterError } from 'multer';
 import config from '../config/env.js';
 
+const multerErrorMessages = [
+  'LIMIT_PART_COUNT',
+  'LIMIT_FILE_SIZE',
+  'LIMIT_FILE_COUNT',
+  'MISSING_FIELD_NAME',
+]
 export const errorHandler: ErrorRequestHandler = async (error, _req, res, _next) => {
   // Log errors in dev mode
   if (config.isDevelopment) console.log('❌', error.name, error.message);
@@ -34,6 +41,20 @@ export const errorHandler: ErrorRequestHandler = async (error, _req, res, _next)
       message: zod.prettifyError(error),
       timestamp: new Date().toISOString(),
     });
+  } else if (error instanceof MulterError) {
+    if (multerErrorMessages.includes(error.code as string)) {
+      res.status(400).json({
+        status: 'error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      });
+    }
   } else {
     res.status(500).json({
       status: 'error',

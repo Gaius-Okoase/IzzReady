@@ -41,9 +41,10 @@ export interface IFoodItem {
   item?: mongoose.Types.ObjectId | undefined;
   name?: string | undefined;
   imageUrl?: string | undefined;
+  category?: string | undefined;
   isCustom: boolean;
   status: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
-  cookingTimer: Date;
+  cookingTimer: Date | null;
 }
 
 export interface IQueue {
@@ -68,4 +69,16 @@ export interface DecodedToken {
   id: string;
   role: 'owner' | 'customer';
   identifier: string;
+}
+
+export interface ICustomFoodItem {
+  name: string,
+  imageUrl?: string | undefined
+}
+
+export interface IUpdateFoodItem {
+  name?: string | undefined,
+  imageUrl?: string | undefined,
+  status?: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
+  cookingTimer?: Date;
 }

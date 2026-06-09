@@ -18,6 +18,9 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     imageUrl: {
       type: String,
     },
+    category: {
+      type: String,
+    },
     isCustom: {
       type: Boolean,
       default: false,
@@ -29,6 +32,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     },
     cookingTimer: {
       type: Date,
+      default: null,
     },
   },
   {

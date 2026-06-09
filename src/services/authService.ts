@@ -190,7 +190,7 @@ export const tokenRotationService = async (refreshToken: string) => {
 
     // Handle wrong refresh token
     if (!user) {
-      await User.findByIdAndUpdate(id, { refreshToken: null }); //Ask about isActive
+      await User.findByIdAndUpdate(id, { refreshToken: null });
       throw new AppError(403, 'Invalid or expired token. Please log in again.');
     }
 
