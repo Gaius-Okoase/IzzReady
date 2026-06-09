@@ -3,22 +3,22 @@
     {
       "name": "Jollof Rice",
       "category": "rice",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1779972431/Jollof-Rice-02-removebg-preview_qyfkhw.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1779972431/Jollof-Rice-02-removebg-preview_qyfkhw.png"
     },
     {
       "name": "Fried Rice",
       "category": "rice",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1779972406/fried-rice-removebg-preview_yaqo3g.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1779972406/fried-rice-removebg-preview_yaqo3g.png"
     },
     {
       "name": "White Rice And Stew",
       "category": "rice",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1780060513/white-rice_eohfdx.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1780060513/white-rice_eohfdx.png"
     },
     {
       "name": "Ofada Rice",
       "category": "rice",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1780060509/ofada-rice_kwgdnc.jpg"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1780060509/ofada-rice_kwgdnc.jpg"
     },
     { "name": "Eba", "category": "swallow", "imageUrl": "" },
     { "name": "Amala", "category": "swallow", "imageUrl": "" },
@@ -43,20 +43,20 @@
     {
       "name": "Tomato Stew",
       "category": "soup",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1779972530/stew-pot_v0tzrx.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1779972530/stew-pot_v0tzrx.png"
     },
     { "name": "Beans", "category": "beans", "imageUrl": "" },
     {
       "name": "Ewa Agoyin",
       "category": "beans",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1779972412/ewaagoyin-removebg-preview_umdfgh.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1779972412/ewaagoyin-removebg-preview_umdfgh.png"
     },
     { "name": "Moin Moin", "category": "beans", "imageUrl": "" },
     { "name": "Akara", "category": "beans", "imageUrl": "" },
     {
       "name": "Beans Porridge",
       "category": "beans",
-      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_400//v1780060512/beans-porridge_ufmdzp.png"
+      "imageUrl": "https://res.cloudinary.com/drqwq2fos/image/upload/f_auto,q_auto,c_scale,w_300//v1780060512/beans-porridge_ufmdzp.png"
     },
     { "name": "Gbegiri", "category": "beans", "imageUrl": "" },
     { "name": "Boiled Yam", "category": "yam", "imageUrl": "" },

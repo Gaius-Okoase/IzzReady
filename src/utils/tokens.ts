@@ -3,7 +3,7 @@ import config from '../config/env.js';
 
 export const generateAccessToken = (id: string, role: 'customer' | 'owner', identifier: string) => {
   return jwt.sign({ id, role, identifier }, config.accessSec!, {
-    expiresIn: '5m',
+    expiresIn: '20m',
   });
 };
 

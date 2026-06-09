@@ -8,7 +8,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
       ref: 'Bukka',
       required: true,
     },
-    foodCatalogId: {
+    item: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'FoodCatalog',
     },
@@ -16,6 +16,9 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
       type: String,
     },
     imageUrl: {
+      type: String,
+    },
+    category: {
       type: String,
     },
     isCustom: {
@@ -29,6 +32,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
     },
     cookingTimer: {
       type: Date,
+      default: null,
     },
   },
   {
@@ -37,7 +41,7 @@ const foodItemSchema = new mongoose.Schema<IFoodItem>(
 );
 
 // Indexes
-foodItemSchema.index({ foodCatalogId: 1 }, { sparse: true });
+foodItemSchema.index({ item: 1 }, { sparse: true });
 
 foodItemSchema.set('toJSON', {
   virtuals: true,

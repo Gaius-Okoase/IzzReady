@@ -7,6 +7,8 @@ import config from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
 import authRoute from './routes/authRoute.js';
 import bukkaRoute from './routes/bukkaRoutes.js';
+import foodItemRoute from './routes/foodItemRoute.js';
+import foodCatalogRoute from './routes/foodCatalogRoute.js';
 import { authLimit, bukkaLimit } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { authenticate, isOwner } from './middleware/auth.js';
@@ -43,7 +45,9 @@ app.get('/health', (_req, res) => {
 
 // Routes with rate limiter
 app.use('/api/auth', authLimit, authRoute);
-app.use('/api/bukkas', bukkaLimit, authenticate, isOwner, bukkaRoute);
+app.use('/api/bukkas', bukkaLimit, authenticate, bukkaRoute);
+app.use('/api/bukkas/:bukkaId/food-items', bukkaLimit, authenticate, foodItemRoute);
+app.use('/api/food-catalog', bukkaLimit, authenticate, isOwner, foodCatalogRoute);
 
 // Catch all undefined routes
 app.use((req, res) => {

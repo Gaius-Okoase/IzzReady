@@ -1,18 +1,67 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { Request, Response } from 'express';
 import { successResponse } from '../utils/responseHelper.js';
-import type { IBukka } from '../types/types.js';
+import asyncHandler from '../utils/asyncHandler.js';
+import type { IBukka, IUpdateBukka } from '../types/types.js';
 // import config from '../config/env.js';
-import { bukkaSetupService } from '../services/bukkaService.js';
+import {
+  createBukkaService,
+  deleteBukka,
+  getOwnerBukkas,
+  getBukkaDetails,
+  updateBukkaDetails,
+  getSurroundingBukkas,
+} from '../services/bukkaService.js';
 
-export const bukkaSetupController = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.user.id;
-    const { name, location } = req.body as IBukka;
-    const bukkaData = { name, location };
-    const bukka = await bukkaSetupService(userId, bukkaData);
+export const createBukkaController = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const { name, location } = req.body as IBukka;
+  const bukkaData = { name, location };
+  const bukka = await createBukkaService(userId, bukkaData);
 
-    successResponse(res, 201, 'Bukka created successfully.', { bukka });
-  } catch (error) {
-    next(error);
-  }
-};
+  successResponse(res, 201, 'Bukka created successfully.', bukka);
+});
+
+export const getOwnerBukkasController = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user.id;
+  const bukkas = await getOwnerBukkas(ownerId);
+
+  successResponse(res, 200, "Owner's bukka(s) retrieved successfully.", bukkas);
+});
+
+export const getBukkaDetailsController = asyncHandler(async (req: Request, res: Response) => {
+  const bukkaId = req.params.bukkaId as string;
+
+  const bukka = await getBukkaDetails(bukkaId);
+
+  successResponse(res, 200, 'Bukka details retreived.', bukka);
+});
+
+export const updateBukkaDetailsController = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user.id as string;
+  const bukkaId = req.params.bukkaId as string;
+  const bukkaData = req.body as IUpdateBukka;
+
+  const bukka = await updateBukkaDetails(ownerId, bukkaId, bukkaData);
+
+  successResponse(res, 200, 'Bukka details update successfull.', bukka);
+});
+
+export const deleteBukkaController = asyncHandler(async (req: Request, res: Response) => {
+  const ownerId = req.user.id as string;
+  const bukkaId = req.params.bukkaId as string;
+
+  await deleteBukka(ownerId, bukkaId);
+
+  successResponse(res, 200, 'Bukka deletion successful.');
+});
+
+export const getSurroundingBukkasController = asyncHandler(async (req: Request, res: Response) => {
+  console.log(req.query);
+  const lon = Number(req.query.lon);
+  const lat = Number(req.query.lat);
+  console.log('lon:', lon, 'lat:', lat);
+
+  const bukkas = await getSurroundingBukkas(lon, lat);
+
+  successResponse(res, 200, 'Bukkas retrieved successfully.', bukkas);
+});

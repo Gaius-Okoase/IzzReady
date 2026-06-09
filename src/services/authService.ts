@@ -16,12 +16,13 @@ export const createUserService = async (userData: IUser) => {
   //         ...(phoneNumber ? [{ phoneNumber }] : [])
   //     ]
   // };
-  const findExistingUser = async (email: string | undefined, phoneNumber: string | undefined) => {
+  const findExistingUser = async (email?: string, phoneNumber?: string) => {
     let user;
     if (phoneNumber) user = await User.findOne({ phoneNumber }).lean();
     if (email) user = await User.findOne({ email }).lean();
     return user;
   };
+
   const userExists = await findExistingUser(email, phoneNumber);
   if (userExists)
     throw new AppError(409, 'User already exists. Please log in or reset your password.');
@@ -43,6 +44,7 @@ export const createUserService = async (userData: IUser) => {
   const accessToken = generateAccessToken(user.id, user.role, identifier);
   user.refreshToken = refreshToken;
   user.isProfileComplete = role === 'owner' ? false : true;
+
   //Save user to DB
   await user.save();
 
@@ -57,7 +59,7 @@ export const processGoogleCallbackService = async (
   // Handle google error
   if (q.error) throw new Error('Something went wrong. Please try again.');
   // Handle state mismatch
-  if (q.state !== state) throw new Error('State mismatch. Possible CSRF attack.');
+  if (q.state !== state) throw new AppError(403, 'State mismatch. Possible CSRF attack.');
 
   // Generate token payload
   const tokenPayload = {
@@ -114,6 +116,8 @@ export const processGoogleCallbackService = async (
       message,
     };
   } else {
+    // TODO: Check if the user has a role
+
     // Generate user data for izzReady app
     const userData = {
       name: user.data.name,
@@ -186,7 +190,7 @@ export const tokenRotationService = async (refreshToken: string) => {
 
     // Handle wrong refresh token
     if (!user) {
-      await User.findByIdAndUpdate(id, { refreshToken: null }); //Ask about isActive
+      await User.findByIdAndUpdate(id, { refreshToken: null });
       throw new AppError(403, 'Invalid or expired token. Please log in again.');
     }
 
