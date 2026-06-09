@@ -4,6 +4,7 @@ import { Bukka } from '../models/Bukka.js';
 import { FoodCatalog } from '../models/FoodCatalog.js';
 import { AppError } from '../utils/AppError.js';
 import type { FoodMenuQueryOptions, ICustomFoodItem, IUpdateFoodItem, IFoodItem } from '../types/types.js';
+import { Queue } from '../models/Queue.js';
 // import type { IFoodItem } from "../types/types.js";
 
 export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => {
@@ -101,6 +102,7 @@ export const updateFoodItem = async (
   if (status === 'unavailable' || status === 'izz_ready') {
     item.status = status;
     item.cookingTimer = null;
+    await Queue.deleteMany({foodItemId: itemId})
   }
 
   // Allow 'cooking' status only if 'cookingTimer' is set
