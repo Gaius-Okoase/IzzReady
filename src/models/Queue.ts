@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import type { IQueue } from '../types/types.js';
 
-const querySchema = new mongoose.Schema<IQueue>(
+const queueSchema = new mongoose.Schema<IQueue>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +20,7 @@ const querySchema = new mongoose.Schema<IQueue>(
   }
 );
 
-querySchema.set('toJSON', {
+queueSchema.set('toJSON', {
   virtuals: true,
   transform: (_doc, ret) => {
     (ret as any)._id = undefined;
@@ -28,4 +28,4 @@ querySchema.set('toJSON', {
   },
 });
 
-export const Query = mongoose.model('Query', querySchema);
+export const Queue = mongoose.model('Queue', queueSchema);

@@ -4,6 +4,7 @@ import { Bukka } from '../models/Bukka.js';
 import { FoodCatalog } from '../models/FoodCatalog.js';
 import { AppError } from '../utils/AppError.js';
 import type { FoodMenuQueryOptions, ICustomFoodItem, IUpdateFoodItem, IFoodItem } from '../types/types.js';
+import { Queue } from '../models/Queue.js';
 // import type { IFoodItem } from "../types/types.js";
 
 export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => {
@@ -97,10 +98,11 @@ export const updateFoodItem = async (
     item.imageUrl = imageUrl;
   }
 
-  // Clear cooking timer for unavailable and izz_ready
+  // Clear cooking timer and queue entries for unavailable and izz_ready
   if (status === 'unavailable' || status === 'izz_ready') {
     item.status = status;
     item.cookingTimer = null;
+    await Queue.deleteMany({foodItemId: itemId})
   }
 
   // Allow 'cooking' status only if 'cookingTimer' is set
@@ -110,7 +112,6 @@ export const updateFoodItem = async (
   if (cookingTimer && status === 'cooking') {
     item.cookingTimer = new Date(Date.now() + (cookingTimer * 60 * 1000));
     item.status = status;
-    
   }
 
   await item.save();
