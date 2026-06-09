@@ -18,10 +18,10 @@ export const bukkaSetupValidator = async (req: Request, _res: Response, next: Ne
 export const coordinatesValidator = async (req: Request, _res: Response, next: NextFunction) => {
   const coordinates = req.query;
 
-  const result = CoordinatesSchemas.safeParse(coordinates)
+  const result = CoordinatesSchemas.safeParse(coordinates);
 
   if (!result.success) return next(result.error);
 
-  console.log(req.query)
-  return next()
-}
+  console.log(req.query);
+  return next();
+};

@@ -72,13 +72,13 @@ export interface DecodedToken {
 }
 
 export interface ICustomFoodItem {
-  name: string,
-  imageUrl?: string | undefined
+  name: string;
+  imageUrl?: string | undefined;
 }
 
 export interface IUpdateFoodItem {
-  name?: string | undefined,
-  imageUrl?: string | undefined,
+  name?: string | undefined;
+  imageUrl?: string | undefined;
   status?: 'unavailable' | 'cooking' | 'awaiting_confirmation' | 'izz_ready';
   cookingTimer?: Date;
 }

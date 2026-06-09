@@ -10,7 +10,7 @@ const multerErrorMessages = [
   'LIMIT_FILE_SIZE',
   'LIMIT_FILE_COUNT',
   'MISSING_FIELD_NAME',
-]
+];
 export const errorHandler: ErrorRequestHandler = async (error, _req, res, _next) => {
   // Log errors in dev mode
   if (config.isDevelopment) console.log('❌', error.name, error.message);

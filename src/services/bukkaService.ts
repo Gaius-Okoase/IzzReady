@@ -64,16 +64,18 @@ export const deleteBukka = async (ownerId: string, bukkaId: string) => {
 };
 
 export const getSurroundingBukkas = async (lon: number, lat: number) => {
-  console.log(`lon:`, lon, 'lat:', lat)
-  const bukkas = await Bukka.find({ location: {
-    $nearSphere: {
-      $geometry : {
-        type: "Point",
-        coordinates: [lon, lat]
+  console.log(`lon:`, lon, 'lat:', lat);
+  const bukkas = await Bukka.find({
+    location: {
+      $nearSphere: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [lon, lat],
+        },
+        $maxDistance: 1500,
       },
-      $maxDistance: 1500
-    }
-  }}).select('-ownerId')
+    },
+  }).select('-ownerId');
 
   return bukkas;
-}
+};

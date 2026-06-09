@@ -8,10 +8,9 @@ const __dirname = path.dirname(__filename);
 const outputPath = path.join(__dirname, 'urls.json');
 
 try {
-  const { resources } = await cloudinary.api.resources_by_asset_folder(
-    'izzReady/food_catalog',
-    { max_results: 100 }
-  );
+  const { resources } = await cloudinary.api.resources_by_asset_folder('izzReady/food_catalog', {
+    max_results: 100,
+  });
 
   const urls = resources.map((element) => {
     const url = element.secure_url;

@@ -1,6 +1,11 @@
 import type { Request, Response, NextFunction } from 'express';
 import z from 'zod';
-import { CustomFoodItemSchema, FoodItemDetailsSchema, FoodItemIdsSchema, FoodItemStatusSchema } from '../zod_schema/foodItemSchema.js';
+import {
+  CustomFoodItemSchema,
+  FoodItemDetailsSchema,
+  FoodItemIdsSchema,
+  FoodItemStatusSchema,
+} from '../zod_schema/foodItemSchema.js';
 
 export const createFoodItemsValidator = (req: Request, _res: Response, next: NextFunction) => {
   type FoodItemIds = z.infer<typeof FoodItemIdsSchema>;
@@ -23,21 +28,21 @@ export const createCustomFoodItemValidator = (req: Request, _res: Response, next
   const result = CustomFoodItemSchema.safeParse(itemData);
 
   if (!result.success) return next(result.error);
-  
+
   req.body = result.data;
 
   return next();
-}
+};
 
 export const updateFoodItemDetailValidator = (req: Request, _res: Response, next: NextFunction) => {
   type FoodItemDetails = z.infer<typeof FoodItemDetailsSchema>;
-  
+
   const itemData: FoodItemDetails = req.body;
 
   const result = FoodItemDetailsSchema.safeParse(itemData);
 
   if (!result.success) return next(result.error);
-  
+
   req.body = result.data;
 
   return next();
@@ -53,6 +58,6 @@ export const updateFoodItemStatusValidator = (req: Request, _res: Response, next
   if (!result.success) return next(result.error);
 
   req.body = result.data;
-  
+
   return next();
 };

@@ -1,5 +1,11 @@
 import type { Request, Response } from 'express';
-import { createFoodItem, getFoodMenuItems, updateFoodItem, deleteFoodItem, createCustomFoodItem } from '../services/foodItemService.js';
+import {
+  createFoodItem,
+  getFoodMenuItems,
+  updateFoodItem,
+  deleteFoodItem,
+  createCustomFoodItem,
+} from '../services/foodItemService.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { successResponse } from '../utils/responseHelper.js';
 import type { ICustomFoodItem, IUpdateFoodItem } from '../types/types.js';
@@ -35,7 +41,7 @@ export const createCustomFoodItemController = asyncHandler(async (req: Request, 
   const item = await createCustomFoodItem(bukkaId, itemData);
 
   successResponse(res, 201, 'Custom food item created successfully.', item);
-})
+});
 
 export const updateFoodItemController = asyncHandler(async (req: Request, res: Response) => {
   const itemData: IUpdateFoodItem = req.body;

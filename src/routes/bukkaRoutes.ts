@@ -12,7 +12,7 @@ import { coordinatesValidator } from '../middleware/bukkaValidator.js';
 
 const router = Router();
 
-router.get('/', coordinatesValidator, getSurroundingBukkasController)
+router.get('/', coordinatesValidator, getSurroundingBukkasController);
 router.post('/create', isOwner, createBukkaController);
 router.get('/me', isOwner, getOwnerBukkasController);
 router.get('/:bukkaId', getBukkaDetailsController);
