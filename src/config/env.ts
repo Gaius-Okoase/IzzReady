@@ -31,6 +31,10 @@ const config = {
   cloudiApiKey: process.env.CLOUDINARY_API_KEY,
   cloudiApiSec: process.env.CLOUDINARY_API_SECRET,
   cloudiUrl: process.env.CLOUDINARY_URL,
+
+  //VAPID kes
+  vapidPri: process.env.VAPID_PRIVATE_KEY,
+  vapidPub: process.env.VAPID_PUBLIC_KEY
 };
 
 for (const key in config) {
