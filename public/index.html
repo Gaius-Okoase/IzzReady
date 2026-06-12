@@ -67,14 +67,17 @@
             const push = await register.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: urlBase64ToUint8Array(vapidPub)
+            }).catch(err => {
+                console.error('Something went wrong. Please try again.')
+                if (!push) return;
             })
 
             // Send the subscription object to the backend
-            await fetch('/notifications/subscribe', {
+            await fetch('http://localhost:4100/api/notification/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer '
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMTA0ZTgyMTFlMWUyZDg1OTkwNWEyMSIsInJvbGUiOiJjdXN0b21lciIsImlkZW50aWZpZXIiOiJnYWl1c29ub3NldGFsZUBnbWFpbC5jb20iLCJpYXQiOjE3ODEyMzgwODcsImV4cCI6MTc4MTIzOTI4N30.2JYh6T0X_kZCTZH9IiKIe1CYdLhI4g4BHpWf3ZbsiJY'
                 },
                 body: JSON.stringify(push)
             })

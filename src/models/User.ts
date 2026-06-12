@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
       default: false,
     },
     pushNotifToken: {
-      type: String,
+      type: [String],
     },
     refreshToken: {
       type: String,
@@ -89,6 +89,7 @@ userSchema.set('toJSON', {
     (ret as any).password = undefined;
     (ret as any).refreshToken = undefined;
     (ret as any).googleId = undefined;
+    (ret as any).pushNotifToken = undefined;
   },
 });
 

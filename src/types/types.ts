@@ -9,7 +9,7 @@ export interface IUser {
   password?: string | undefined;
   role: 'customer' | 'owner';
   isProfileComplete?: boolean | undefined;
-  pushNotifToken?: string | undefined;
+  pushNotifToken?: string[] | undefined;
   refreshToken?: string | undefined;
   isActive?: boolean;
   lastLoginAt?: Date;
@@ -87,4 +87,12 @@ export interface FoodMenuQueryOptions {
   name?: string | undefined,
   status?: 'unavailable' | 'cooking' | 'izz_ready' | undefined,
   category?: string | undefined
+}
+
+export interface PushNotifToken {
+  endpoint: string;
+  keys: {
+    auth: string;
+    p256dh: string;
+  }
 }
