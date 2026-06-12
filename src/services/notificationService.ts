@@ -40,6 +40,3 @@ export const sendIzzReadyNotif = async (userId: string) => {
         }
     }))
 }
-
-sendIzzReadyNotif('6a104e8211e1e2d859905a21')
-//TODO: Allow multiple broswers notification token per user
