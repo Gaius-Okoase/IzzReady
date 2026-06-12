@@ -1,4 +1,4 @@
-import webpush from 'web-push';
+import webpush, { WebPushError } from 'web-push';
 import config from '../config/env.js';
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
@@ -17,7 +17,7 @@ export const savePushNotif = async (userId: string, push: PushNotifToken) => {
 }
 
 export const sendIzzReadyNotif = async (userId: string) => {
-    // Get the subscripiton object
+    // Get the user document
     const user = await User.findById(userId);
 
     if (!user)  {
@@ -35,8 +35,16 @@ export const sendIzzReadyNotif = async (userId: string) => {
             const tokenObj = JSON.parse(token)
             await webpush.sendNotification(tokenObj, payload)
         } catch (error) {
-            console.error(`Failed to send to token:`, error)
-
+            if (error instanceof WebPushError) {
+                if (error.statusCode === 410) {
+                    await User.findByIdAndUpdate(userId, { $pull: { pushNotifToken: token } })
+                  console.error(`Failed to send to notification:`, error.body)  
+                }
+            } else {
+                console.error(`Failed to send to notification:`, error)
+            }
+                        
         }
     }))
 }
+sendIzzReadyNotif('6a2b9717d9fe67ec5477e148')
