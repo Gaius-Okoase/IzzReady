@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IzzReady</title>
+</head>
+<body>
+    <h1 style="text-align: center;">izzReady Notification Test</h1>
+    <div style="
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgb(233, 186, 56);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        ">
+        <p style="text-align: center;">Click to allow izzReady send notifications to you.</p>
+        <button style="
+        background-color: rgb(221, 143, 25); 
+        color: white; 
+        padding: 10px; 
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        ">
+        Enable Notification
+        </button>
+    </div>
+    <script>
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4)
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+            const rawData = atob(base64)
+            return Uint8Array.from([...rawData].map(char => char.charCodeAt(0)))
+        }
+        const vapidPub = 'BLWeeAeUMwWMe8lRwMvbp6dgHl93GV9dAML0sI1EQ-WOAkycdIruNo6Gu--vAHVaWuSHOVPnialtiuiH7t-dZmA'
+        const button = document.querySelector('button')
+
+        button.addEventListener('click', async () => {
+            // Declare register
+            let register;
+            // Check if service worker is available in the broswer
+            if ('serviceWorker' in navigator) {
+                // Register the service worker file if available
+                register = await navigator.serviceWorker.register('./sw.js');
+                console.log('Service work registered')
+            } else {
+                console.log('Service worker not available. Failed to register.')
+            }
+
+            if (!register) {
+                console.log('Service worker registration failed.')
+                return
+            }
+
+            // Ask user for permission to show notification
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                console.log('Notification permission denied.')
+                return;
+            }
+
+            // Subscribe the registered service worker to the browser's push manager
+            const push = await register.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(vapidPub)
+            }).catch(err => {
+                console.error('Something went wrong. Please try again.')
+                if (!push) return;
+            })
+
+            // Send the subscription object to the backend
+            await fetch('http://localhost:4100/api/notification/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5NzE3ZDlmZTY3ZWM1NDc3ZTE0OCIsInJvbGUiOiJjdXN0b21lciIsImlkZW50aWZpZXIiOiJnYWl1c29ub3NldGFsZUBnbWFpbC5jb20iLCJpYXQiOjE3ODEyNDE3NzMsImV4cCI6MTc4MTI0Mjk3M30.hZDM1vCT1Kiwb9sYvkDT5_eZopJusje7oS2yP6q8Gbo'
+                },
+                body: JSON.stringify(push)
+            })
+        })
+    </script>
+</body>
+</html>

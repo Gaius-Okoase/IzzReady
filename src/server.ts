@@ -10,6 +10,7 @@ import bukkaRoute from './routes/bukkaRoutes.js';
 import foodItemRoute from './routes/foodItemRoute.js';
 import foodCatalogRoute from './routes/foodCatalogRoute.js';
 import queueRoute from './routes/queueRoute.js';
+import notificationRoute from './routes/notificationRoute.js';
 import { authLimit, bukkaLimit } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { authenticate, isOwner } from './middleware/auth.js';
@@ -50,6 +51,7 @@ app.use('/api/bukkas', bukkaLimit, authenticate, bukkaRoute);
 app.use('/api/bukkas/:bukkaId/food-items', bukkaLimit, authenticate, foodItemRoute);
 app.use('/api/food-catalog', bukkaLimit, authenticate, isOwner, foodCatalogRoute);
 app.use('/api/food-item/:itemId/queue', authenticate, queueRoute);
+app.use('/api/notification', authenticate, notificationRoute);
 
 // Catch all undefined routes
 app.use((req, res) => {
