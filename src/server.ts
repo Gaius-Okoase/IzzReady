@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import { Server } from 'http';
 import config from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
+import './jobs/cookingTimerJob.js';
 import authRoute from './routes/authRoute.js';
 import bukkaRoute from './routes/bukkaRoutes.js';
 import foodItemRoute from './routes/foodItemRoute.js';
