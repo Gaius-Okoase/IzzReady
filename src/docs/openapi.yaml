@@ -1,0 +1,1295 @@
+openapi: 3.0.3
+info:
+  title: IzzReady API
+  description: |
+    IzzReady API documentation generated from the Express TypeScript codebase.
+    Includes authentication, bukka management, food menus, queue handling, push notifications,
+    and Google OAuth flows.
+  version: 1.0.0
+servers:
+  - url: http://localhost:{port}
+    description: Local development server
+    variables:
+      port:
+        default: '4100'
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        googleId:
+          type: string
+          nullable: true
+        name:
+          type: string
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        role:
+          type: string
+          enum: [customer, owner]
+        isProfileComplete:
+          type: boolean
+          nullable: true
+        pushNotifToken:
+          type: array
+          items:
+            type: string
+          nullable: true
+        isActive:
+          type: boolean
+          nullable: true
+        lastLoginAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Register:
+      type: object
+      required: [name, phoneNumber, password, role]
+      properties:
+        name:
+          type: string
+          minLength: 4
+        phoneNumber:
+          type: string
+          description: Nigeria phone number matching /^(+234|0)[789][01]\d{8}$/
+        password:
+          type: string
+          minLength: 6
+        role:
+          type: string
+          enum: [customer, owner]
+    Login:
+      type: object
+      required: [phoneNumber, password]
+      properties:
+        phoneNumber:
+          type: string
+        password:
+          type: string
+    LocationPoint:
+      type: object
+      required: [type, coordinates]
+      properties:
+        type:
+          type: string
+          enum: [Point]
+        coordinates:
+          type: array
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+          description: [longitude, latitude]
+    Bukka:
+      type: object
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+        name:
+          type: string
+        location:
+          $ref: '#/components/schemas/LocationPoint'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BukkaCreateRequest:
+      type: object
+      required: [name, location]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        location:
+          $ref: '#/components/schemas/LocationPoint'
+    BukkaUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        location:
+          $ref: '#/components/schemas/LocationPoint'
+    FoodCategory:
+      type: string
+      enum: [rice, swallow, soup, beans, yam, plantain, protein, pasta, pepper soup, snacks, drinks, porridge, stew, potato, grills, specials, sides, others]
+    FoodCatalogItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        imageUrl:
+          type: string
+        category:
+          $ref: '#/components/schemas/FoodCategory'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FoodItemBase:
+      type: object
+      properties:
+        id:
+          type: string
+        bukkaId:
+          type: string
+        item:
+          oneOf:
+            - $ref: '#/components/schemas/FoodCatalogItem'
+            - type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        category:
+          $ref: '#/components/schemas/FoodCategory'
+          nullable: true
+        isCustom:
+          type: boolean
+        status:
+          type: string
+          enum: [unavailable, cooking, awaiting_confirmation, izz_ready]
+        cookingTimer:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FoodItemIdsRequest:
+      type: object
+      required: [foodItemIds]
+      properties:
+        foodItemIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+    FoodItemCustomRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+    FoodItemDetailsRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+          format: binary
+    FoodItemStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [unavailable, cooking, izz_ready]
+        cookingTimer:
+          type: number
+          minimum: 1
+          description: Duration in minutes. Required when status is cooking.
+    PushSubscription:
+      type: object
+      required: [endpoint, keys]
+      properties:
+        endpoint:
+          type: string
+          format: uri
+        keys:
+          type: object
+          required: [auth, p256dh]
+          properties:
+            auth:
+              type: string
+            p256dh:
+              type: string
+    QueueEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        foodItemId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    QueueCountResponse:
+      type: object
+      properties:
+        queueCount:
+          type: integer
+    BulkWriteResult:
+      type: object
+      properties:
+        upsertedCount:
+          type: integer
+        upsertedIds:
+          type: object
+    AuthResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+            accessToken:
+              type: string
+    TokenRefreshResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            accessToken:
+              type: string
+    UserProfileResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+    BukkaResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            id:
+              type: string
+            ownerId:
+              type: string
+            name:
+              type: string
+            location:
+              $ref: '#/components/schemas/LocationPoint'
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    FoodItemsResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/FoodItemBase'
+    FoodCatalogResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/FoodCatalogItem'
+    QueueCountSuccessResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - $ref: '#/components/schemas/QueueCountResponse'
+    QueueEntryResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            queue:
+              $ref: '#/components/schemas/QueueEntry'
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      tags: [Misc]
+      responses:
+        '200':
+          description: Server health returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation or missing identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/google:
+    get:
+      summary: Start Google OAuth sign in / sign up
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: role
+          required: true
+          schema:
+            type: string
+            enum: [customer, owner]
+      responses:
+        '302':
+          description: Redirect to Google OAuth endpoint and set OAuth cookies
+  /api/auth/google/callback:
+    get:
+      summary: Handle Google OAuth callback and return access token
+      tags: [Auth]
+      parameters:
+        - in: query
+          name: state
+          schema:
+            type: string
+        - in: query
+          name: code
+          schema:
+            type: string
+        - in: query
+          name: error
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sign in successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '201':
+          description: User created via Google OAuth
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '403':
+          description: CSRF protection or forbidden access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/login:
+    post:
+      summary: Login with phone number and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Validation failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden user account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/logout:
+    post:
+      summary: Logout current authenticated user
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/refresh-token:
+    post:
+      summary: Rotate refresh token and return a new access token
+      tags: [Auth]
+      responses:
+        '200':
+          description: Token refresh successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefreshResponse'
+        '403':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/me:
+    get:
+      summary: Get current authenticated user profile
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas:
+    get:
+      summary: Get surrounding bukkas using geographic coordinates
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: lon
+          required: true
+          schema:
+            type: number
+          description: Longitude of the search point
+        - in: query
+          name: lat
+          required: true
+          schema:
+            type: number
+          description: Latitude of the search point
+      responses:
+        '200':
+          description: Surrounding bukkas retrieved
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      bukkas:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Bukka'
+        '400':
+          description: Invalid coordinates or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized access
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/create:
+    post:
+      summary: Create a bukka for the authenticated owner
+      description: Owner-only route. Creates a new bukka and marks owner profile complete.
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukkaCreateRequest'
+      responses:
+        '201':
+          description: Bukka created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukkaResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner role required"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Owner already has a bukka
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/me:
+    get:
+      summary: Get bukka(s) for the authenticated owner
+      description: Owner-only route.
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Owner bukka(s) retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      bukkas:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Bukka'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner role required or inactive account"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No bukka found for owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}:
+    get:
+      summary: Get bukka details by ID
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bukka details retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukkaResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Update bukka details
+      description: Owner-only route.
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukkaUpdateRequest'
+      responses:
+        '200':
+          description: Bukka updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BukkaResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only or inactive account"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found or not owned by authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a bukka
+      description: Owner-only route.
+      tags: [Bukka]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bukka deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items:
+    post:
+      summary: Add existing catalog food items to a bukka
+      description: Owner-only route.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItemIdsRequest'
+      responses:
+        '201':
+          description: Food items added to bukka
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/BulkWriteResult'
+        '400':
+          description: Unknown food item or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 'Forbidden: owner-only route'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get food menu items for a bukka
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+            description: Category value is case-insensitive
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [unavailable, cooking, izz_ready]
+      responses:
+        '200':
+          description: Food menu retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FoodItemBase'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items/custom:
+    post:
+      summary: Create a custom food item for a bukka
+      description: Owner-only route. Accepts multipart/form-data for an optional image upload.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodItemCustomRequest'
+      responses:
+        '201':
+          description: Custom food item created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/FoodItemBase'
+        '400':
+          description: Validation or upload error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items/{itemId}/details:
+    patch:
+      summary: Update custom food item details
+      description: Owner-only route. Accepts multipart/form-data and may upload a new image.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodItemDetailsRequest'
+      responses:
+        '200':
+          description: Food item details updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/FoodItemBase'
+        '400':
+          description: Validation error or cannot update non-custom item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item or bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items/{itemId}/status:
+    patch:
+      summary: Update food item status and cooking timer
+      description: Owner-only route. The cookingTimer field is a duration in minutes.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItemStatusRequest'
+      responses:
+        '200':
+          description: Food item status updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/FoodItemBase'
+        '400':
+          description: Validation error or invalid status transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route or invalid queue action"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/bukkas/{bukkaId}/food-items/{itemId}:
+    delete:
+      summary: Delete a food item from a bukka
+      description: Owner-only route.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Food item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/food-catalog:
+    get:
+      summary: Get the full food catalog
+      description: Owner-only route.
+      tags: [FoodCatalog]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Food catalog retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodCatalogResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/food-item/{itemId}/queue:
+    post:
+      summary: Join queue for a cooking food item
+      tags: [Queue]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Queue entry created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/QueueEntry'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Queue join forbidden when item is not cooking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item not found or user queue not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Already in queue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Leave queue for a food item
+      tags: [Queue]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Left queue successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item not found or user not in queue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/food-item/{itemId}/queue/count:
+    get:
+      summary: Get current queue count for a food item
+      description: Owner-only route.
+      tags: [Queue]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Queue count retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueCountSuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: "Forbidden: owner-only route"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Food item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/notification/subscribe:
+    post:
+      summary: Save a push notification subscription for the authenticated user
+      tags: [Notification]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscription'
+      responses:
+        '200':
+          description: Push notification token saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

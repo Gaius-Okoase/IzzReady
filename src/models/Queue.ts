@@ -28,4 +28,12 @@ queueSchema.set('toJSON', {
   },
 });
 
+queueSchema.set('toObject', {
+  virtuals: true,
+  transform: (_doc, ret) => {
+    (ret as any)._id = undefined;
+    (ret as any).__v = undefined;
+  },
+});
+
 export const Queue = mongoose.model('Queue', queueSchema);

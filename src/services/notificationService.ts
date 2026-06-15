@@ -18,7 +18,7 @@ export const savePushNotif = async (userId: string, push: PushNotifToken) => {
 
 export const sendIzzReadyNotif = async (userId: string) => {
     // Get the user document
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).lean();
 
     if (!user)  {
         console.error(`User ${userId} not found.`)
@@ -38,13 +38,12 @@ export const sendIzzReadyNotif = async (userId: string) => {
             if (error instanceof WebPushError) {
                 if (error.statusCode === 410) {
                     await User.findByIdAndUpdate(userId, { $pull: { pushNotifToken: token } })
-                  console.error(`Failed to send to notification:`, error.body)  
+                  console.error(`Failed to send to notification for User ${userId} :`, error.body)  
                 }
             } else {
-                console.error(`Failed to send to notification:`, error)
+                console.error(`Failed to send to notification for User ${userId}:`, error)
             }
                         
         }
     }))
 }
-sendIzzReadyNotif('6a2b9717d9fe67ec5477e148')

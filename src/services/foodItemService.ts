@@ -5,6 +5,7 @@ import { FoodCatalog } from '../models/FoodCatalog.js';
 import { AppError } from '../utils/AppError.js';
 import type { FoodMenuQueryOptions, ICustomFoodItem, IUpdateFoodItem, IFoodItem } from '../types/types.js';
 import { Queue } from '../models/Queue.js';
+import { sendIzzReadyNotif } from './notificationService.js';
 // import type { IFoodItem } from "../types/types.js";
 
 export const createFoodItem = async (bukkaId: string, foodItemIds: string[]) => {
@@ -92,21 +93,18 @@ export const updateFoodItem = async (
 
   // Check if food item is custom before updating name or image
   if (name || imageUrl) {
-    if (!item.isCustom) throw new AppError(401, `Can't change the detail of custom food item.`);
-
+    if (!item.isCustom) {
+      throw new AppError(400, `Can't change the detail of non-custom food item.`);
+    }
     item.name = name;
     item.imageUrl = imageUrl;
   }
 
-  // Clear cooking timer and queue entries for unavailable and izz_ready
-  if (status === 'unavailable' || status === 'izz_ready') {
-    item.status = status;
-    item.cookingTimer = null;
-    await Queue.deleteMany({foodItemId: itemId})
-  }
-
   // Allow 'cooking' status only if 'cookingTimer' is set
-  if (!cookingTimer && status === 'cooking') throw new AppError(400, 'Please set a cooking timer.');
+  if (!cookingTimer && (status === 'cooking')) throw new AppError(400, 'Please set a cooking timer.');
+  if (cookingTimer && status !== 'cooking' && item.status !== 'cooking') {
+    throw new AppError(400, `You can't set cooking timer for this food item.`)
+  }
 
   // Update 'cooking' status confirming status is 'cooking'
   if (cookingTimer && status === 'cooking') {
@@ -114,9 +112,28 @@ export const updateFoodItem = async (
     item.status = status;
   }
 
+  // Handle 'unavailabe' and 'izz_ready' statuses
+  if (status === 'unavailable' || status === 'izz_ready') {
+  item.status = status;
+  item.cookingTimer = null;
+  }
+
   await item.save();
 
-  return await item.populate('item', 'name imageUrl category');
+  // Send notification for izz_ready food items
+  if (item.status === 'izz_ready') {
+    const queues = await Queue.find({foodItemId : itemId}).lean();
+    if (queues.length !== 0 ) {
+      await Promise.all(queues.map(queue => sendIzzReadyNotif(queue.userId.toString())))
+    }
+  }
+
+  // Clear cooking timer and queue entries for unavailable and izz_ready
+  if (item.status === 'unavailable' || item.status === 'izz_ready') {
+    await Queue.deleteMany({foodItemId: itemId})
+  }
+
+  return ( await item.populate('item', 'name imageUrl category')).toObject();
 };
 
 export const deleteFoodItem = async (bukkaId: string, itemId: string) => {
