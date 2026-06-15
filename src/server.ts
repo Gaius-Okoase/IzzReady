@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import fs from 'node:fs';
+import YAML from 'yaml';
+import swaggerUi from 'swagger-ui-express';
 import { Server } from 'http';
 import config from './config/env.js';
 import { connectDB, disconnectDB } from './config/db.js';
@@ -45,6 +48,10 @@ app.get('/health', (_req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+const openApiFile = fs.readFileSync(new URL('./docs/openapi.yaml', import.meta.url), 'utf8');
+const openApiDocument = YAML.parse(openApiFile);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Routes with rate limiter
 app.use('/api/auth', authLimit, authRoute);

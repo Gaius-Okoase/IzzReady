@@ -7,7 +7,7 @@ export const successResponse = (
   data?: object
 ) => {
   res.status(statusCode).json({
-    success: true,
+    status: 'success',
     message,
     ...data,
     timestamp: new Date().toISOString(),
