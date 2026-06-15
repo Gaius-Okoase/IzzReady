@@ -28,9 +28,7 @@ export const getFoodMenuController = asyncHandler(async (req: Request, res: Resp
   const query: FoodMenuQueryOptions = req.query;
   const foodItems = await getFoodMenuItems(bukkaId, query);
   const message =
-    foodItems.length === 0
-      ? 'Food menu is empty.'
-      : 'Food menu retreived successfully.';
+    foodItems.length === 0 ? 'Food menu is empty.' : 'Food menu retreived successfully.';
 
   successResponse(res, 200, message, foodItems);
 });

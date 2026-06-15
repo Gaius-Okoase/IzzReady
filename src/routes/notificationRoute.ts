@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { savePushNotifController } from "../controllers/notificationController.js";
+import { Router } from 'express';
+import { savePushNotifController } from '../controllers/notificationController.js';
 
 const router = Router();
 

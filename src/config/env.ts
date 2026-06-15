@@ -34,7 +34,7 @@ const config = {
 
   //VAPID kes
   vapidPri: process.env.VAPID_PRIVATE_KEY,
-  vapidPub: process.env.VAPID_PUBLIC_KEY
+  vapidPub: process.env.VAPID_PUBLIC_KEY,
 };
 
 for (const key in config) {

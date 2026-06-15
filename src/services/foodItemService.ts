@@ -3,7 +3,12 @@ import { FoodItem } from '../models/FoodItem.js';
 import { Bukka } from '../models/Bukka.js';
 import { FoodCatalog } from '../models/FoodCatalog.js';
 import { AppError } from '../utils/AppError.js';
-import type { FoodMenuQueryOptions, ICustomFoodItem, IUpdateFoodItem, IFoodItem } from '../types/types.js';
+import type {
+  FoodMenuQueryOptions,
+  ICustomFoodItem,
+  IUpdateFoodItem,
+  IFoodItem,
+} from '../types/types.js';
 import { Queue } from '../models/Queue.js';
 import { sendIzzReadyNotif } from './notificationService.js';
 // import type { IFoodItem } from "../types/types.js";
@@ -62,21 +67,22 @@ export const getFoodMenuItems = async (bukkaId: string, query: FoodMenuQueryOpti
   if (!bukka) throw new AppError(404, 'Bukka does not exist.');
 
   // Destructure query options
-  const {status, category} = query;
-  
+  const { status, category } = query;
+
   // Initialize filter options object with mandatory bukkaId
-  const options: QueryFilter<IFoodItem> = {bukkaId}
+  const options: QueryFilter<IFoodItem> = { bukkaId };
 
   // Insert optional filter properties
-  const formattedCategory = category?.trim()?.toLocaleLowerCase()
-  const items = formattedCategory ? await FoodCatalog.find({category: formattedCategory}).lean() : null
-  const itemIds = items ? items.map(item => item._id) : null
-  if (itemIds) options.item = {$in : itemIds}
-  if (status) options.status = status
+  const formattedCategory = category?.trim()?.toLocaleLowerCase();
+  const items = formattedCategory
+    ? await FoodCatalog.find({ category: formattedCategory }).lean()
+    : null;
+  const itemIds = items ? items.map((item) => item._id) : null;
+  if (itemIds) options.item = { $in: itemIds };
+  if (status) options.status = status;
 
   // Retrieve food menu
-  const foodMenu = await FoodItem.find(options)
-  .populate('item', 'name imageUrl category')
+  const foodMenu = await FoodItem.find(options).populate('item', 'name imageUrl category');
 
   return foodMenu;
 };
@@ -101,39 +107,39 @@ export const updateFoodItem = async (
   }
 
   // Allow 'cooking' status only if 'cookingTimer' is set
-  if (!cookingTimer && (status === 'cooking')) throw new AppError(400, 'Please set a cooking timer.');
+  if (!cookingTimer && status === 'cooking') throw new AppError(400, 'Please set a cooking timer.');
   if (cookingTimer && status !== 'cooking' && item.status !== 'cooking') {
-    throw new AppError(400, `You can't set cooking timer for this food item.`)
+    throw new AppError(400, `You can't set cooking timer for this food item.`);
   }
 
   // Update 'cooking' status confirming status is 'cooking'
   if (cookingTimer && status === 'cooking') {
-    item.cookingTimer = new Date(Date.now() + (cookingTimer * 60 * 1000));
+    item.cookingTimer = new Date(Date.now() + cookingTimer * 60 * 1000);
     item.status = status;
   }
 
   // Handle 'unavailabe' and 'izz_ready' statuses
   if (status === 'unavailable' || status === 'izz_ready') {
-  item.status = status;
-  item.cookingTimer = null;
+    item.status = status;
+    item.cookingTimer = null;
   }
 
   await item.save();
 
   // Send notification for izz_ready food items
   if (item.status === 'izz_ready') {
-    const queues = await Queue.find({foodItemId : itemId}).lean();
-    if (queues.length !== 0 ) {
-      await Promise.all(queues.map(queue => sendIzzReadyNotif(queue.userId.toString())))
+    const queues = await Queue.find({ foodItemId: itemId }).lean();
+    if (queues.length !== 0) {
+      await Promise.all(queues.map((queue) => sendIzzReadyNotif(queue.userId.toString())));
     }
   }
 
   // Clear cooking timer and queue entries for unavailable and izz_ready
   if (item.status === 'unavailable' || item.status === 'izz_ready') {
-    await Queue.deleteMany({foodItemId: itemId})
+    await Queue.deleteMany({ foodItemId: itemId });
   }
 
-  return ( await item.populate('item', 'name imageUrl category')).toObject();
+  return (await item.populate('item', 'name imageUrl category')).toObject();
 };
 
 export const deleteFoodItem = async (bukkaId: string, itemId: string) => {

@@ -41,7 +41,7 @@ const upload = multer({
 
 // ROUTES
 router.post('/create', isOwner, createFoodItemsValidator, createFoodItemsController);
-router.get('/', foodMenuQueryValidator,getFoodMenuController);
+router.get('/', foodMenuQueryValidator, getFoodMenuController);
 router.post(
   '/custom',
   isOwner,

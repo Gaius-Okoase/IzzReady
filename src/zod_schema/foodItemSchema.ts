@@ -46,10 +46,8 @@ export const FoodMenuQuerySchema = z.object({
       .min(1, 'Food name cannot be an empty string')
       .max(50, 'Food name too long.')
   ),
-  category: z.optional(
-    z.string().min(1, 'Category must not be empty an empty string.')
-  ),
+  category: z.optional(z.string().min(1, 'Category must not be empty an empty string.')),
   status: z.optional(
     z.literal(['unavailable', 'cooking', 'izz_ready'], 'Select a valid food status')
-  ),  
-})
+  ),
+});

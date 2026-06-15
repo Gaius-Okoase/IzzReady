@@ -84,9 +84,9 @@ export interface IUpdateFoodItem {
 }
 
 export interface FoodMenuQueryOptions {
-  name?: string | undefined,
-  status?: 'unavailable' | 'cooking' | 'izz_ready' | undefined,
-  category?: string | undefined
+  name?: string | undefined;
+  status?: 'unavailable' | 'cooking' | 'izz_ready' | undefined;
+  category?: string | undefined;
 }
 
 export interface PushNotifToken {
@@ -94,5 +94,5 @@ export interface PushNotifToken {
   keys: {
     auth: string;
     p256dh: string;
-  }
+  };
 }

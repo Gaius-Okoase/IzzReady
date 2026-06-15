@@ -31,7 +31,7 @@ export const foodMenuQueryValidator = (req: Request, _res: Response, next: NextF
   if (!result.success) return next(result.error);
 
   return next();
-}
+};
 
 export const createCustomFoodItemValidator = (req: Request, _res: Response, next: NextFunction) => {
   type CustomFoodItem = z.infer<typeof CustomFoodItemSchema>;
