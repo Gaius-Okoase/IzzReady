@@ -43,8 +43,8 @@ if (config.isProduction) {
 
 // Request parsers
 app.use(cookieParser());
-app.use(express.json({limit: '10kb'}));
 
+app.use(express.json({limit: '10kb'}));
 // Health check
 app.get('/health', (_req, res) => {
   res.status(200).send({
@@ -54,7 +54,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-const openApiFile = fs.readFileSync(new URL('./docs/openapi.yaml', import.meta.url), 'utf8');
+const openApiFile = fs.readFileSync(new URL('../docs/openapi.yaml', import.meta.url), 'utf8');
 const openApiDocument = YAML.parse(openApiFile);
 if (config.isDevelopment) {
   app.use('/api-docs', helmet({
