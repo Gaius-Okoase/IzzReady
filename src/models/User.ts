@@ -56,6 +56,18 @@ const userSchema = new mongoose.Schema<IUser, mongoose.Model<IUser>, IUserMethod
       default: () => new Date(),
       required: true,
     },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockoutUntil: {
+      type: Date,
+      default: null,
+    },
+    lastFailedLoginAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

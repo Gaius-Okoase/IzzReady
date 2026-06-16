@@ -4,6 +4,7 @@ import type { DecodedToken, IUser, LoginDetails } from '../types/types.js';
 import { User } from '../models/User.js';
 import { AppError } from '../utils/AppError.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/tokens.js';
+import { calculateLockoutUntil, MAX_LOGIN_ATTEMPTS } from '../utils/bruteForceProtection.js';
 import config from '../config/env.js';
 
 export const createUserService = async (userData: IUser) => {
@@ -148,14 +149,44 @@ export const loginService = async (userData: LoginDetails) => {
 
   // Find user document
   const user = await User.findOne({ phoneNumber }).select('+password');
-  if (!user) throw new AppError(401, 'Incorrect phone number or password');
+  
+  // Generic error message for both not found and wrong password (prevent username enumeration)
+  const genericError = 'Incorrect phone number or password';
+
+  if (!user) throw new AppError(401, genericError);
 
   // Check if user's account is active
   if (user.isActive !== true) throw new AppError(403, 'Forbidden');
 
+  // Check if account is locked due to too many failed login attempts
+  if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+    const minutesRemaining = Math.ceil((user.lockoutUntil.getTime() - Date.now()) / 60000);
+    throw new AppError(
+      429,
+      `Account temporarily locked due to too many failed login attempts. Try again in ${minutesRemaining} minute(s).`
+    );
+  }
+
   // Check if password is correct
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw new AppError(401, 'Incorrect phone number or password');
+  if (!isMatch) {
+    // Increment failed login attempts
+    user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+    user.lastFailedLoginAt = new Date();
+
+    // Lock account if max attempts exceeded
+    if (user.failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
+      user.lockoutUntil = calculateLockoutUntil(user.failedLoginAttempts);
+    }
+
+    await user.save();
+    throw new AppError(401, genericError);
+  }
+
+  // Password is correct - reset failed attempts and clear lockout
+  user.failedLoginAttempts = 0;
+  user.lockoutUntil = null;
+  user.lastFailedLoginAt = null;
 
   // Generate tokens and save to db
   const refreshToken = generateRefreshToken(user.id, user.role, user.phoneNumber as string);

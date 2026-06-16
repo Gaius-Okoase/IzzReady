@@ -319,6 +319,14 @@ components:
               $ref: '#/components/schemas/User'
             accessToken:
               type: string
+            accessTokenExpiresIn:
+              type: string
+              example: '20m'
+              description: Access token lifetime (human-readable). Access token is returned in response body.
+            refreshTokenExpiresIn:
+              type: string
+              example: '30d'
+              description: Refresh token lifetime (human-readable). Refresh token is set as an httpOnly cookie at `/api/auth`.
     TokenRefreshResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -326,6 +334,14 @@ components:
           properties:
             accessToken:
               type: string
+            accessTokenExpiresIn:
+              type: string
+              example: '20m'
+              description: Access token lifetime (human-readable).
+            refreshTokenExpiresIn:
+              type: string
+              example: '30d'
+              description: Refresh token lifetime (human-readable). A new refresh token cookie may be set by the server.
     UserProfileResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'

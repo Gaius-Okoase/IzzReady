@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import fs from 'node:fs';
 import YAML from 'yaml';
 import swaggerUi from 'swagger-ui-express';
@@ -25,6 +26,13 @@ const PORT = config.port;
 
 /* Middlewares */
 // Security
+app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        "upgrade-insecure-requests": config.isDevelopment ? null : [],
+      },
+    },
+  }))
 if (config.isProduction) {
   app.use(cors({ origin: config.corsOrigin, credentials: true }));
   app.use(morgan('combined'));
@@ -35,31 +43,39 @@ if (config.isProduction) {
 
 // Request parsers
 app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '10kb'}));
 
 // Health check
 app.get('/health', (_req, res) => {
   res.status(200).send({
     success: true,
     message: "Server is healthy and ready. No sleeping on bicycle. Let's get the API started.",
-    uptime: process.uptime(),
-    environment: config.env,
     timestamp: new Date().toISOString(),
   });
 });
 
 const openApiFile = fs.readFileSync(new URL('./docs/openapi.yaml', import.meta.url), 'utf8');
 const openApiDocument = YAML.parse(openApiFile);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+if (config.isDevelopment) {
+  app.use('/api-docs', helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+    },
+  },
+}), swaggerUi.serve, swaggerUi.setup(openApiDocument));
+}
 
 // Routes with rate limiter
-app.use('/api/auth', authLimit, authRoute);
-app.use('/api/bukkas', bukkaLimit, authenticate, bukkaRoute);
-app.use('/api/bukkas/:bukkaId/food-items', bukkaLimit, authenticate, foodItemRoute);
-app.use('/api/food-catalog', bukkaLimit, authenticate, isOwner, foodCatalogRoute);
-app.use('/api/food-item/:itemId/queue', authenticate, queueRoute);
-app.use('/api/notification', authenticate, notificationRoute);
+app.use('/api/v1/auth', authLimit, authRoute);
+app.use('/api/v1/bukkas', bukkaLimit, authenticate, bukkaRoute);
+app.use('/api/v1/bukkas/:bukkaId/food-items', bukkaLimit, authenticate, foodItemRoute);
+app.use('/api/v1/food-catalog', bukkaLimit, authenticate, isOwner, foodCatalogRoute);
+app.use('/api/v1/food-item/:itemId/queue', bukkaLimit, authenticate, queueRoute);
+app.use('/api/v1/notification', bukkaLimit, authenticate, notificationRoute);
 
 // Catch all undefined routes
 app.use((req, res) => {

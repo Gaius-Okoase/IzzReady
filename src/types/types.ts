@@ -13,6 +13,9 @@ export interface IUser {
   refreshToken?: string | undefined;
   isActive?: boolean;
   lastLoginAt?: Date;
+  failedLoginAttempts?: number;
+  lockoutUntil?: Date | null;
+  lastFailedLoginAt?: Date | null;
 }
 
 export interface IUserMethod {
