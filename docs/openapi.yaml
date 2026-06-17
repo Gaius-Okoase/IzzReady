@@ -12,7 +12,7 @@ servers:
     variables:
       port:
         default: '4100'
-  - url: https://izzready.onrender.com/
+  - url: https://izzready.onrender.com
     description: Live development server       
 security:
   - bearerAuth: []

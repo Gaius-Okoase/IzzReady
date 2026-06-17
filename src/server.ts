@@ -59,15 +59,15 @@ const openApiFile = fs.readFileSync(new URL('../docs/openapi.yaml', import.meta.
 const openApiDocument = YAML.parse(openApiFile);
 if (config.isDevelopment) {
   app.use('/api-docs', helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
     },
-  },
-}), swaggerUi.serve, swaggerUi.setup(openApiDocument));
+  }), swaggerUi.serve, swaggerUi.setup(openApiDocument));
 }
 
 // Routes with rate limiter
