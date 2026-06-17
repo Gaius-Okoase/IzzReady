@@ -61,7 +61,7 @@ export const getSurroundingBukkasController = asyncHandler(async (req: Request, 
   const lat = Number(req.query.lat);
   console.log('lon:', lon, 'lat:', lat);
 
-  const bukkas = await getSurroundingBukkas(lon, lat);
+  const result = await getSurroundingBukkas(lon, lat);
 
-  successResponse(res, 200, 'Bukkas retrieved successfully.', bukkas);
+  successResponse(res, 200, result.message, result.bukkas);
 });

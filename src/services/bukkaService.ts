@@ -77,5 +77,8 @@ export const getSurroundingBukkas = async (lon: number, lat: number) => {
     },
   }).select('-ownerId');
 
-  return bukkas;
+  const message = bukkas.length === 0 
+  ? 'No registered bukkas near you yet.'
+  : 'Bukkas retreived successfully.'
+  return { bukkas, message };
 };
