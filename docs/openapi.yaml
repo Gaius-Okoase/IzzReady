@@ -328,7 +328,7 @@ components:
             refreshTokenExpiresIn:
               type: string
               example: '30d'
-              description: Refresh token lifetime (human-readable). Refresh token is set as an httpOnly cookie at `/api/auth`.
+              description: Refresh token lifetime (human-readable). Refresh token is set as an httpOnly cookie at `/api/v1/auth`.
     TokenRefreshResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
@@ -411,7 +411,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-  /api/auth/register:
+  /api/v1/auth/register:
     post:
       summary: Register a new user
       tags: [Auth]
@@ -446,7 +446,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/auth/google:
+  /api/v1/auth/google:
     get:
       summary: Start Google OAuth sign in / sign up
       tags: [Auth]
@@ -460,7 +460,7 @@ paths:
       responses:
         '302':
           description: Redirect to Google OAuth endpoint and set OAuth cookies
-  /api/auth/google/callback:
+  /api/v1/auth/google/callback:
     get:
       summary: Handle Google OAuth callback and return access token
       tags: [Auth]
@@ -502,7 +502,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/auth/login:
+  /api/v1/auth/login:
     post:
       summary: Login with phone number and password
       tags: [Auth]
@@ -537,7 +537,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/auth/logout:
+  /api/v1/auth/logout:
     post:
       summary: Logout current authenticated user
       tags: [Auth]
@@ -556,7 +556,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/auth/refresh-token:
+  /api/v1/auth/refresh-token:
     post:
       summary: Rotate refresh token and return a new access token
       tags: [Auth]
@@ -579,7 +579,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/auth/me:
+  /api/v1/auth/me:
     get:
       summary: Get current authenticated user profile
       tags: [Auth]
@@ -598,7 +598,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas:
+  /api/v1/bukkas:
     get:
       summary: Get surrounding bukkas using geographic coordinates
       tags: [Bukka]
@@ -643,7 +643,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/create:
+  /api/v1/bukkas/create:
     post:
       summary: Create a bukka for the authenticated owner
       description: Owner-only route. Creates a new bukka and marks owner profile complete.
@@ -687,7 +687,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/me:
+  /api/v1/bukkas/me:
     get:
       summary: Get bukka(s) for the authenticated owner
       description: Owner-only route.
@@ -726,7 +726,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}:
+  /api/v1/bukkas/{bukkaId}:
     get:
       summary: Get bukka details by ID
       tags: [Bukka]
@@ -837,7 +837,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}/food-items:
+  /api/v1/bukkas/{bukkaId}/food-items:
     post:
       summary: Add existing catalog food items to a bukka
       description: Owner-only route.
@@ -946,7 +946,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}/food-items/custom:
+  /api/v1/bukkas/{bukkaId}/food-items/custom:
     post:
       summary: Create a custom food item for a bukka
       description: Owner-only route. Accepts multipart/form-data for an optional image upload.
@@ -998,7 +998,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}/food-items/{itemId}/details:
+  /api/v1/bukkas/{bukkaId}/food-items/{itemId}/details:
     patch:
       summary: Update custom food item details
       description: Owner-only route. Accepts multipart/form-data and may upload a new image.
@@ -1055,7 +1055,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}/food-items/{itemId}/status:
+  /api/v1/bukkas/{bukkaId}/food-items/{itemId}/status:
     patch:
       summary: Update food item status and cooking timer
       description: Owner-only route. The cookingTimer field is a duration in minutes.
@@ -1112,7 +1112,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/bukkas/{bukkaId}/food-items/{itemId}:
+  /api/v1/bukkas/{bukkaId}/food-items/{itemId}:
     delete:
       summary: Delete a food item from a bukka
       description: Owner-only route.
@@ -1155,7 +1155,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/food-catalog:
+  /api/v1/food-catalog:
     get:
       summary: Get the full food catalog
       description: Owner-only route.
@@ -1181,7 +1181,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/food-item/{itemId}/queue:
+  /api/v1/food-item/{itemId}/queue:
     post:
       summary: Join queue for a cooking food item
       tags: [Queue]
@@ -1256,7 +1256,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/food-item/{itemId}/queue/count:
+  /api/v1/food-item/{itemId}/queue/count:
     get:
       summary: Get current queue count for a food item
       description: Owner-only route.
@@ -1294,7 +1294,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/notification/subscribe:
+  /api/v1/notification/subscribe:
     post:
       summary: Save a push notification subscription for the authenticated user
       tags: [Notification]
