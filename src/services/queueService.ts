@@ -21,7 +21,7 @@ export const joinQueue = async (userId: string, itemId: string) => {
     userId,
   });
 
-  return queue.toObject();
+  return queue;
 };
 
 export const leaveQueue = async (userId: string, itemId: string) => {

@@ -9,7 +9,7 @@ export const successResponse = (
   res.status(statusCode).json({
     status: 'success',
     message,
-    ...data,
+    data,
     timestamp: new Date().toISOString(),
   });
 };

@@ -139,7 +139,7 @@ export const updateFoodItem = async (
     await Queue.deleteMany({ foodItemId: itemId });
   }
 
-  return (await item.populate('item', 'name imageUrl category')).toObject();
+  return (await item.populate('item', 'name imageUrl category'));
 };
 
 export const deleteFoodItem = async (bukkaId: string, itemId: string) => {

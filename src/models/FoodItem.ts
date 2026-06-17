@@ -53,14 +53,4 @@ foodItemSchema.set('toJSON', {
   },
 });
 
-foodItemSchema.set('toObject', {
-  virtuals: true,
-  transform: (_doc, ret) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ret as any)._id = undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ret as any).__v = undefined;
-  },
-});
-
 export const FoodItem = mongoose.model('FoodItem', foodItemSchema);

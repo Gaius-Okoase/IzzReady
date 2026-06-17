@@ -838,57 +838,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
   /api/v1/bukkas/{bukkaId}/food-items:
-    post:
-      summary: Add existing catalog food items to a bukka
-      description: Owner-only route.
-      tags: [FoodItem]
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: bukkaId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FoodItemIdsRequest'
-      responses:
-        '201':
-          description: Food items added to bukka
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/BulkWriteResult'
-        '400':
-          description: Unknown food item or validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: 'Forbidden: owner-only route'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Bukka not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
     get:
       summary: Get food menu items for a bukka
       tags: [FoodItem]
@@ -936,6 +885,64 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 'Forbidden: owner-only route'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Bukka not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/bukkas/{bukkaId}/food-items/create:
+    post:
+      summary: Add existing catalog food items to a bukka
+      description: Owner-only route.
+      tags: [FoodItem]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: bukkaId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodItemIdsRequest'
+      responses:
+        '201':
+          description: Food items added to bukka
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - $ref: '#/components/schemas/BulkWriteResult'
+        '400':
+          description: Unknown food item or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 'Forbidden: owner-only route'
           content:
             application/json:
               schema:
