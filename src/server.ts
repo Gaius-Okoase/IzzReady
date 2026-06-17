@@ -54,6 +54,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
+// OpenAPI docs route
 const openApiFile = fs.readFileSync(new URL('../docs/openapi.yaml', import.meta.url), 'utf8');
 const openApiDocument = YAML.parse(openApiFile);
 if (config.isDevelopment) {
