@@ -312,93 +312,116 @@ components:
           type: integer
         upsertedIds:
           type: object
+    BulkWriteResultResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/BulkWriteResult'
+    FoodItemResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/FoodItemBase'
     AuthResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            user:
-              $ref: '#/components/schemas/User'
-            accessToken:
-              type: string
-            accessTokenExpiresIn:
-              type: string
-              example: '20m'
-              description: Access token lifetime (human-readable). Access token is returned in response body.
-            refreshTokenExpiresIn:
-              type: string
-              example: '30d'
-              description: Refresh token lifetime (human-readable). Refresh token is set as an httpOnly cookie at `/api/v1/auth`.
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+                accessToken:
+                  type: string
+                accessTokenExpiresIn:
+                  type: string
+                  example: '20m'
+                  description: Access token lifetime (human-readable). Access token is returned in response body.
+                refreshTokenExpiresIn:
+                  type: string
+                  example: '30d'
+                  description: Refresh token lifetime (human-readable). Refresh token is set as an httpOnly cookie at `/api/v1/auth`.
     TokenRefreshResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            accessToken:
-              type: string
-            accessTokenExpiresIn:
-              type: string
-              example: '20m'
-              description: Access token lifetime (human-readable).
-            refreshTokenExpiresIn:
-              type: string
-              example: '30d'
-              description: Refresh token lifetime (human-readable). A new refresh token cookie may be set by the server.
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                accessTokenExpiresIn:
+                  type: string
+                  example: '20m'
+                  description: Access token lifetime (human-readable).
+                refreshTokenExpiresIn:
+                  type: string
+                  example: '30d'
+                  description: Refresh token lifetime (human-readable). A new refresh token cookie may be set by the server.
     UserProfileResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            user:
-              $ref: '#/components/schemas/User'
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
     BukkaResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            id:
-              type: string
-            ownerId:
-              type: string
-            name:
-              type: string
-            location:
-              $ref: '#/components/schemas/LocationPoint'
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
+            data:
+              $ref: '#/components/schemas/Bukka'
     FoodItemsResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            items:
-              type: array
-              items:
-                $ref: '#/components/schemas/FoodItemBase'
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FoodItemBase'
     FoodCatalogResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            items:
-              type: array
-              items:
-                $ref: '#/components/schemas/FoodCatalogItem'
+            data:
+              type: object
+              properties:
+                items:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FoodCatalogItem'
     QueueCountSuccessResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
-        - $ref: '#/components/schemas/QueueCountResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/QueueCountResponse'
     QueueEntryResponse:
       allOf:
         - $ref: '#/components/schemas/SuccessResponse'
         - type: object
           properties:
-            queue:
-              $ref: '#/components/schemas/QueueEntry'
+            data:
+              type: object
+              properties:
+                queue:
+                  $ref: '#/components/schemas/QueueEntry'
 paths:
   /health:
     get:
@@ -627,10 +650,13 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      bukkas:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Bukka'
+                      data:
+                        type: object
+                        properties:
+                          bukkas:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Bukka'
         '400':
           description: Invalid coordinates or validation error
           content:
@@ -704,10 +730,13 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      bukkas:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Bukka'
+                      data:
+                        type: object
+                        properties:
+                          bukkas:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Bukka'
         '401':
           description: Unauthorized
           content:
@@ -873,10 +902,13 @@ paths:
                   - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
-                      items:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/FoodItemBase'
+                      data:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/FoodItemBase'
         '400':
           description: Invalid query parameters
           content:
@@ -926,9 +958,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/BulkWriteResult'
+                $ref: '#/components/schemas/BulkWriteResultResponse'
         '400':
           description: Unknown food item or validation error
           content:
@@ -978,9 +1008,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/FoodItemBase'
+                $ref: '#/components/schemas/FoodItemResponse'
         '400':
           description: Validation or upload error
           content:
@@ -1035,9 +1063,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/FoodItemBase'
+                $ref: '#/components/schemas/FoodItemResponse'
         '400':
           description: Validation error or cannot update non-custom item
           content:
@@ -1092,9 +1118,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/FoodItemBase'
+                $ref: '#/components/schemas/FoodItemResponse'
         '400':
           description: Validation error or invalid status transition
           content:
@@ -1208,7 +1232,13 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/SuccessResponse'
-                  - $ref: '#/components/schemas/QueueEntry'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          queue:
+                            $ref: '#/components/schemas/QueueEntry'
         '401':
           description: Unauthorized
           content:
