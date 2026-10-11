@@ -90,9 +90,9 @@ While delivery apps focus on bigger restaurants, IzzReady fills the gap for smal
 
 ## 🚀 Project Status
 
-- **Stage**: Pre-development (Idea validation & planning)
+- **Stage**: Development (Backend fully developed)
 - **MVP Goal**: Launch with 1–5 bukkas, starting with the founder’s family bukka
-- **Target Launch**: June 2026
+- **Target Launch**: June 2027
 
 ---
 
