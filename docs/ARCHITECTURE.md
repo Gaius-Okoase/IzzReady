@@ -21,9 +21,7 @@ Maps incoming HTTP requests to the correct controller based on URL path and HTTP
 Controller Layer
 Receives requests from the router. Extracts relevant data from params, body, and headers. Delegates to the service layer for all business logic. Shapes and sends the final HTTP response. Never interacts with the database directly.
 Service Layer
-Contains all business logic. Completely HTTP-agnostic — no request or response objects exist here. Services are callable by both controllers and background jobs without modification. This is where cross-collection operations, status transitions, and notification triggers are orchestrated.
-Data Access Layer
-The only layer that interacts with MongoDB. All queries, updates, and deletions are written here. Isolating database interaction in this layer means any future database change is contained to one place.
+Contains all business logic. Completely HTTP-agnostic — no request or response objects exist here. Services are callable by both controllers and background jobs without modification. This is where cross-collection operations, status transitions, and notification triggers are orchestrated. This layer also interacts with MongoDB. All queries, updates, and deletions are written here. 
 
 ---
 

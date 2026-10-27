@@ -86,6 +86,11 @@ While delivery apps focus on bigger restaurants, IzzReady fills the gap for smal
 
 - To be decided
 
+## 🧑‍💻 Developer Documentation
+
+For local setup, environment variables, API structure, and implementation
+details, see the [Technical Guide](./docs/TECHNICAL_README.md).
+
 ---
 
 ## 🚀 Project Status
